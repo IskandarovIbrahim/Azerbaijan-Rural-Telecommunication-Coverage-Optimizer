@@ -29,6 +29,7 @@ function createTerrainDetails(map, onViewChange) {
     labels.replaceChildren(...area.mapLabels.map(place => {
       const label = document.createElement("span");
       label.textContent = place.name;
+      label.dataset.settlementId = place.id;
       label.style.left = (place.x * 100) + "%";
       label.style.top = (place.y * 100) + "%";
       return label;
@@ -88,5 +89,11 @@ function createTerrainDetails(map, onViewChange) {
     refreshView();
     onViewChange();
   });
-  return {setArea, get showElevation() { return toggle.checked; }};
+  function highlightPlace(id) {
+    for (const label of labels.children) {
+      label.classList.toggle("is-selected", label.dataset.settlementId === id);
+    }
+  }
+
+  return {setArea, highlightPlace, get showElevation() { return toggle.checked; }};
 }

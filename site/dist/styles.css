@@ -332,6 +332,7 @@ footer p { margin-bottom: .35rem; }
   line-height: 1.25;
   font-weight: 700;
 }
+.map-place-labels .is-selected { color: #fff; background: var(--pine); }
 .elevation-pin {
   position: absolute;
   z-index: 2;
