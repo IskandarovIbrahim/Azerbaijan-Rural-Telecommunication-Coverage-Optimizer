@@ -226,7 +226,7 @@ tbody tr:last-child > * { border-bottom: 0; }
 .use-layout > div { padding-top: .7rem; border-top: 2px solid #a7c8b3; }
 footer {
   margin-top: 1.8rem;
-  padding: 1.15rem 0 1.6rem;
+  padding: .65rem 0 .72rem;
   border-top: 2px solid #dfa95b;
   background: var(--chrome-surface);
   color: #d1e8df;
@@ -238,11 +238,12 @@ footer .footer-author {
   flex-wrap: wrap;
   align-items: baseline;
   gap: .25rem .85rem;
-  margin-bottom: .65rem;
+  margin-bottom: .32rem;
+  overflow-wrap: anywhere;
 }
-.footer-author strong { color: #f4fff9; font-size: 1rem; }
+.footer-author strong { color: #f4fff9; }
 footer p { margin-bottom: .35rem; }
-footer p:last-child { margin-bottom: 0; }
+footer p:last-child { margin-bottom: 0; font-size: .8125rem; }
 
 @media (max-width: 760px) {
   :root { --gutter: 14px; }
