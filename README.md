@@ -1,13 +1,14 @@
 # Azerbaijan Rural Telecommunication Coverage Optimizer
 
-Where should hypothetical wireless access sites go to reach a group of mountain villages at the lowest modeled cost? This project will compare greedy and exact optimization using the same terrain-aware radio model.
+A terrain-aware wireless planning study for 14 settlements within 17.5 km of Xınalıq, Azerbaijan. The pipeline prepares mapped settlements and elevation, screens hypothetical mast locations, and estimates which site-to-settlement links pass the signal and line-of-sight checks. The next stage will use these results to compare site-selection algorithms.
 
-The first study will focus on a small area around Xınalıq in Quba District, subject to a check of settlement counts and elevation data. Results will describe simulated links to settlement receiver points under stated assumptions.
+The free-space model found a passing link to all 14 settlements with the baseline setup. Adding terrain reduced that result to five. Doubling the mast height from 20 m to 40 m and reducing candidate spacing from 6 km to 3 km increased modeled reachability to nine. These are simulated links to outdoor receiver points under stated assumptions.
 
-- [Game plan and commit sequence](docs/game-plan.md)
-- [Data source decisions](docs/data-sources.md)
-- [First prompt and follow-up template](docs/prompts.md)
-- [Project skills](.agents/skills)
+- [Pilot area and data preparation](docs/pilot-inputs.md)
+- [Data sources](docs/data-sources.md)
+- [Radio model and baseline results](docs/radio-model.md)
+- [Mast height and site spacing experiment](docs/mast-height-and-spacing.md)
+- [Interactive explainer source](site/dist/index.html)
 
 ## Set up the project in Windows PowerShell
 
@@ -21,7 +22,7 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Use your installed Python version in the first command if it differs. The config check and tests run offline after installation. The [pilot config](config/quba-pilot.json) and [data contract](docs/data-contract.md) define the inputs for the data preparation checkpoint.
+Use your installed Python version in the first command if it differs. The config check and tests run offline after installation. The [pilot config](config/quba-pilot.json) and [data contract](docs/data-contract.md) define the study settings and file formats.
 
 ## Prepare the Quba pilot data
 
@@ -29,11 +30,11 @@ Follow the [pilot input guide](docs/pilot-inputs.md) to fetch the pinned files, 
 
 ## Model radio links
 
-Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-links`. The [radio model guide](docs/radio-model.md) explains the assumptions, results and files used by the next checkpoint.
+Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-links`. The [radio model guide](docs/radio-model.md) explains the link-budget assumptions and generated files.
 
 ## Interactive pilot explainer
 
-Open [the website](site/dist/index.html) to explore the four measured simulation cases. The page works from local files and needs no account or API keys for its controls. Select a mast height, candidate spacing and signal model, then choose a settlement to inspect its passing links.
+Open [the website](site/dist/index.html) to explore the four simulation cases. The page works from local files and needs no account or API keys for its controls. Select a mast height, candidate spacing and signal model, then choose a settlement to inspect its passing links.
 
 To refresh the website data after regenerating the pilot inputs and scenarios, run these commands from the project root:
 
