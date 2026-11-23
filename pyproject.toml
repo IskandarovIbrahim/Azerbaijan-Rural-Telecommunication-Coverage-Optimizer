@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azerbaijan-rural-coverage-optimizer"
+version = "0.1.0"
+description = "Terrain-aware rural wireless planning simulations for Azerbaijan"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.scripts]
+coverage-optimizer = "coverage_optimizer.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

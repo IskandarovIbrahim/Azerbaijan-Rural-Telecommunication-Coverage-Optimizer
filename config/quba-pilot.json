@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "study_area": {
+    "id": "quba-xinaliq",
+    "name": "Xınalıq, Quba District, Azerbaijan",
+    "status": "provisional",
+    "center_lon_lat": null,
+    "radius_km": 15,
+    "terrain_buffer_km": null
+  },
+  "scenario": {
+    "id": "fixed-wireless-downlink",
+    "status": "unverified",
+    "frequency_mhz": null,
+    "transmit_power_dbm": null,
+    "transmit_antenna_gain_dbi": null,
+    "receive_antenna_gain_dbi": null,
+    "system_loss_db": null,
+    "transmit_antenna_height_m": null,
+    "receive_antenna_height_m": null,
+    "receiver_threshold_dbm": null,
+    "fade_margin_db": null
+  }
+}

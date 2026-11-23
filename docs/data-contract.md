@@ -1,0 +1,28 @@
+# Pilot data contract
+
+## Pilot configuration
+
+[config/quba-pilot.json](../config/quba-pilot.json) is UTF-8 JSON. Version 1 defines a circular study area with a provisional 15 km radius and a single fixed-wireless downlink scenario. A `null` field is unresolved. Data preparation must establish the center and terrain buffer before clipping. Propagation must require a complete set of documented radio assumptions before it produces links. The scaffold's `check-config` command checks the basic file structure and permits these unresolved values.
+
+Set `center_lon_lat` to `[longitude, latitude]` in WGS84 decimal degrees using a verified settlement point. Store the study radius and terrain buffer in kilometers, frequency in MHz, transmit power and receiver threshold in dBm, antenna gain in dBi, losses and fade margin in dB, and antenna height above the sampled surface in meters.
+
+## Prepared inputs
+
+| Input | Required fields and conventions |
+| --- | --- |
+| Study area | Stable study area ID, AOI geometry and documented terrain buffer. Export WGS84 GeoJSON in longitude, latitude order. Record the prepared metric CRS. |
+| Settlements | Unique `settlement_id`, source feature identifier, local name, one receiver point and demand weight. Preserve the OSM element type and ID as a source key, such as `osm:node:<id>`, and record any deduplication. Keep weights finite and nonnegative. The base case gives each settlement a weight of 1. |
+| Candidate sites | Unique `site_id`, point, surface elevation in meters and a positive cost in modeled cost units. Derive IDs from the pinned grid definition and cell index so filtering or sorting does not change them. Record slope in degrees, mapped road distance in meters and exclusion reasons when applicable. |
+| Terrain | Elevation raster with CRS, grid resolution, vertical datum and NoData policy retained in metadata. Use a suitable local metric CRS for analysis and keep NoData distinct from zero. |
+
+Record for every acquired input the source ID, publisher, dataset name, exact URL or tile ID, release or snapshot, UTC retrieval date, SHA-256, license and credit, input CRS and resolution where applicable, vertical datum for elevations, and preparation steps. Keep local paths and authentication details out of committed source metadata. Label synthetic inputs explicitly.
+
+## Modeled links
+
+Each run records one row per candidate–settlement pair with `scenario_id`, model variant, `site_id`, `settlement_id`, distance in meters, FSPL in dB, received power in dBm, margin in dB, LOS state, decision and reason. Unavailable numeric values are null. Keep FSPL-only LOS flagged as unevaluated.
+
+- **Usable** means the link meets the applicable visibility and link-budget constraints. It contributes 1 to the binary coverage matrix.
+- **Unusable** means a known constraint rules it out, such as a blocked path or insufficient received power. It contributes 0.
+- **Unknown** means an applicable test was inconclusive, such as an otherwise eligible path with missing terrain. It contributes 0 to optimization and is counted separately in diagnostics.
+
+Keep all included settlement IDs in coverage denominators, including settlements with no usable links. Label reachable-only summaries explicitly. Report simulation assumptions with each output.

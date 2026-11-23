@@ -8,3 +8,17 @@ The first study will focus on a small area around Xınalıq in Quba District, su
 - [Data source decisions](docs/data-sources.md)
 - [First prompt and follow-up template](docs/prompts.md)
 - [Project skills](.agents/skills)
+
+## Run the scaffold in Windows PowerShell
+
+From the project root, with Python 3.11 or newer:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\coverage-optimizer.exe --help
+.\.venv\Scripts\coverage-optimizer.exe check-config config/quba-pilot.json
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+Use your installed Python version in the first command if it differs. The config check and tests run offline after installation. The [pilot config](config/quba-pilot.json) and [data contract](docs/data-contract.md) define the inputs for the data preparation checkpoint.
