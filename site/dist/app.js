@@ -26,6 +26,7 @@ let activeCase;
 let activeView;
 let selectedSites;
 const mapCamera = createMapCamera(map, document.querySelector("#map-layer"), drawMap);
+const terrainDetails = createTerrainDetails(map, render);
 function createSettlementControls() {
   for (const settlement of data.settlements) {
     const option = document.createElement("option");
@@ -98,8 +99,10 @@ function drawMap() {
   }
 
   const detail = activeView.settlements[selected];
-  if (detail.bestSite) {
-    const [x, y] = sites[detail.bestSite];
+  const blocked = terrainDetails.showElevation ? detail.obstruction : undefined;
+  const linkSite = detail.bestSite ?? blocked?.site;
+  if (linkSite) {
+    const [x, y] = sites[linkSite];
     const settlement = data.settlements.find(item => item.id === selected);
     context.beginPath();
     context.moveTo(x * width, y * height);
@@ -107,7 +110,8 @@ function drawMap() {
     context.strokeStyle = "#fff";
     context.lineWidth = 4 / scale;
     context.stroke();
-    context.strokeStyle = "#124638";
+    context.strokeStyle = blocked ? "#983c2d" : "#124638";
+    if (blocked) context.setLineDash([5 / scale, 4 / scale]);
     context.lineWidth = 2 / scale;
     context.stroke();
   }
@@ -153,7 +157,10 @@ function render() {
   document.querySelector("#settlement-detail").textContent = detail.count
     ? detail.count + " " + siteType + (detail.count === 1 ? " site has" : " sites have") +
       " a usable link. The map draws the strongest passing link."
-    : "No displayed site has a usable link. " + reason;
+    : "No displayed site has a usable link. " + reason +
+      (terrainDetails.showElevation && detail.obstruction
+        ? " The dashed path is obstructed by up to " + Math.round(-detail.obstruction.clearance) + " m of terrain."
+        : "");
   drawMap();
 }
 
@@ -191,9 +198,7 @@ function renderResults() {
 function renderArea() {
   data = areas[areaSelect.value];
   selected = data.settlements[0].id;
-  const terrain = map.querySelector("img");
-  terrain.src = data.terrainImage;
-  terrain.alt = "Shaded elevation surface for " + data.label;
+  terrainDetails.setArea(data);
   document.querySelector("#settlement-total").textContent = data.settlements.length;
   document.querySelector("#area-result-name").textContent = data.label;
   document.querySelector("#area-cost-name").textContent = data.label;

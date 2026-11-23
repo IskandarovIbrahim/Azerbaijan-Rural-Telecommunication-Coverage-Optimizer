@@ -1,6 +1,8 @@
 """Export the local pilot results and shaded elevation used by the static site."""
 
+import base64
 import csv
+import gzip
 import json
 from pathlib import Path
 import struct
@@ -50,16 +52,59 @@ def shaded_elevation(terrain):
     return np.clip(color, 0, 255).astype("uint8")
 
 
+ELEVATION_STOPS = [
+    (0, [30, 69, 109]),
+    (1000, [40, 126, 121]),
+    (2000, [144, 175, 112]),
+    (3000, [219, 200, 122]),
+    (4000, [238, 220, 177]),
+    (4500, [255, 247, 219]),
+]
+MAP_LABELS = {
+    "quba": {"Laza", "Qrız", "Haputlu", "Zeyid"},
+    "lahic": {"Lahıc", "Duvaryan", "Tağlabiyan", "Müdri", "Qoydan"},
+}
+
+
+def export_elevation(site, area, terrain):
+    valid = np.isfinite(terrain)
+    samples = np.where(valid, np.rint(terrain), -32768).astype("<i2")
+    heights = [height for height, _ in ELEVATION_STOPS]
+    palette = np.array([color for _, color in ELEVATION_STOPS])
+    colors = np.stack([np.interp(samples, heights, palette[:, channel])
+                       for channel in range(3)], axis=2).astype("uint8")
+    colors[~valid] = [169, 188, 177]
+    image = f"elevation-{area}.png"
+    write_png(site / "dist" / image, colors)
+    height, width = samples.shape
+    return {
+        "image": image,
+        "width": width,
+        "height": height,
+        "samples": base64.b64encode(gzip.compress(samples.tobytes(), mtime=0)).decode("ascii"),
+        "legend": ELEVATION_STOPS,
+    }
+
+
 def summarize_links(links, settlements):
     by_settlement = {item["id"]: [] for item in settlements}
+    obstructions = {}
     for row in links:
         if row["decision"] == "usable":
             by_settlement[row["settlement_id"]].append(row)
+        elif row["reason"] == "terrain_obstruction":
+            identifier = row["settlement_id"]
+            clearance = float(row["min_clearance_m"])
+            previous = obstructions.get(identifier)
+            if previous is None or clearance > previous["clearance"]:
+                obstructions[identifier] = {"site": row["site_id"], "clearance": clearance}
 
     details = {}
     for identifier, passing in by_settlement.items():
         best = max(passing, key=lambda row: float(row["margin_db"]), default=None)
         details[identifier] = {"count": len(passing), "bestSite": best["site_id"] if best else None}
+        if not best and identifier in obstructions:
+            details[identifier]["obstruction"] = obstructions[identifier]
     return {
         "settlements": details,
         "reachable": sum(item["count"] > 0 for item in details.values()),
@@ -77,11 +122,11 @@ def export_area(site, area, label, terrain_image):
     raster_paths = [project / "data/raw" / entry["filename"]
                     for entry in manifest["inputs"] if entry["role"] == "elevation"]
     with rasterio.open(coarse / "terrain.tif") as raster:
-        center_x = (raster.bounds.left + raster.bounds.right) / 2
         rows = raster.height
         cols = round(rows * 1.52)
         resolution = raster.res[0]
-        grid = from_origin(center_x - cols * resolution / 2, raster.bounds.top, resolution, resolution)
+        left = raster.bounds.left - ((cols - raster.width) // 2) * resolution
+        grid = from_origin(left, raster.bounds.top, resolution, resolution)
         terrain = project_tiles(raster_paths, (rows, cols), grid, raster.crs)
         project_point = Transformer.from_crs(4326, raster.crs, always_xy=True)
     inverse = ~grid
@@ -153,6 +198,8 @@ def export_area(site, area, label, terrain_image):
 
     data = {
         "label": label, "terrainImage": terrain_image,
+        "elevation": export_elevation(site, area, terrain),
+        "mapLabels": [place for place in settlements if place["name"] in MAP_LABELS[area]],
         "settlements": settlements, "boundary": boundary, "sites": sites, "cases": cases,
         "costs": read_json(project / f"outputs/{area}-costs/comparison.json"),
         "terrainCredit": "Produced using Copernicus WorldDEM™-90. " + manifest["attribution"]["terrain"],
