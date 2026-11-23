@@ -1,5 +1,15 @@
 "use strict";
 
+const siteHeader = document.querySelector(".top");
+
+function updateHeader() {
+  const threshold = siteHeader.classList.contains("is-compact") ? 48 : 112;
+  siteHeader.classList.toggle("is-compact", window.scrollY > threshold);
+}
+
+window.addEventListener("scroll", updateHeader, { passive: true });
+updateHeader();
+
 const data = window.PILOT_DATA;
 const map = document.querySelector("#map");
 const canvas = document.querySelector("#map-overlay");
@@ -60,7 +70,7 @@ function drawMap() {
   const sites = data.sites[activeCase.spacing];
   const displayIds = selectedSites ?? Object.keys(sites);
   const radius = selectedSites ? 6 : 3.5;
-  context.fillStyle = selectedSites ? "#203f70" : "#46617b";
+  context.fillStyle = selectedSites ? "#975a1a" : "#365f55";
   context.strokeStyle = "#f3f7fa";
   context.lineWidth = 1;
   for (const id of displayIds) {
