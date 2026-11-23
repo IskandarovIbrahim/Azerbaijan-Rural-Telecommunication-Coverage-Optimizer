@@ -233,6 +233,14 @@ footer {
   font-size: .875rem;
 }
 footer a { color: #f4fff9; }
+footer .footer-author {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .25rem .85rem;
+  margin-bottom: .65rem;
+}
+.footer-author strong { color: #f4fff9; font-size: 1rem; }
 footer p { margin-bottom: .35rem; }
 footer p:last-child { margin-bottom: 0; }
 
