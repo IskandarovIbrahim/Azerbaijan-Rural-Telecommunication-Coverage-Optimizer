@@ -176,13 +176,13 @@ select:disabled { color: var(--muted); opacity: .75; }
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 74%;
-  height: 74%;
+  width: 57%;
+  height: 57%;
   transform: translate(-50%, -50%);
   background:
-    linear-gradient(45deg, transparent 44%, #c43324 44% 56%, transparent 56%),
-    linear-gradient(-45deg, transparent 44%, #c43324 44% 56%, transparent 56%);
-  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff);
+    linear-gradient(45deg, transparent 46%, #8d5044 46% 54%, transparent 54%),
+    linear-gradient(-45deg, transparent 46%, #8d5044 46% 54%, transparent 54%);
+  filter: drop-shadow(0 0 .75px #fff);
   content: "";
 }
 .marker[aria-pressed=true] { z-index: 3; background: #fff; box-shadow: 0 0 0 2px #214e3e; }
