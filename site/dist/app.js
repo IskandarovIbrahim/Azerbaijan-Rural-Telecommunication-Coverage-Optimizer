@@ -69,21 +69,27 @@ function drawMap() {
 
   const sites = data.sites[activeCase.spacing];
   const displayIds = selectedSites ?? Object.keys(sites);
-  const radius = selectedSites ? 6 : 3.5;
-  context.fillStyle = selectedSites ? "#975a1a" : "#365f55";
-  context.strokeStyle = "#f3f7fa";
-  context.lineWidth = 1;
+  const size = selectedSites ? 7 : 4.25;
+  const siteColor = selectedSites ? "#975a1a" : "#365f55";
+  context.lineCap = "round";
+  context.lineJoin = "round";
   for (const id of displayIds) {
     const [x, y] = sites[id];
     const cx = x * width;
     const cy = y * height;
     context.beginPath();
-    context.moveTo(cx, cy - radius);
-    context.lineTo(cx + radius, cy);
-    context.lineTo(cx, cy + radius);
-    context.lineTo(cx - radius, cy);
-    context.closePath();
-    context.fill();
+    context.moveTo(cx - size * .62, cy + size);
+    context.lineTo(cx, cy - size);
+    context.lineTo(cx + size * .62, cy + size);
+    context.moveTo(cx - size * .31, cy - size * .4);
+    context.lineTo(cx + size * .31, cy - size * .4);
+    context.moveTo(cx - size * .36, cy + size * .4);
+    context.lineTo(cx + size * .36, cy + size * .4);
+    context.strokeStyle = "#fff";
+    context.lineWidth = selectedSites ? 4 : 2.6;
+    context.stroke();
+    context.strokeStyle = siteColor;
+    context.lineWidth = selectedSites ? 2.2 : 1.2;
     context.stroke();
   }
 
@@ -121,6 +127,7 @@ function render() {
   document.querySelector("#reachable").textContent = activeView.reachable;
   document.querySelector("#site-count").textContent = selectedSites?.length ?? activeCase.candidates;
   document.querySelector("#site-label").textContent = selectedSites ? "selected sites" : "candidate sites";
+  document.querySelector("#legend-mast").classList.toggle("candidate", !selectedSites);
   document.querySelector("#legend-site").textContent = selectedSites ? "Selected site" : "Candidate site";
   document.querySelector("#links").textContent = activeView.links;
 

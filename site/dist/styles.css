@@ -145,19 +145,61 @@ select:disabled { color: var(--muted); opacity: .75; }
 .map img, .map canvas, .markers { position: absolute; inset: 0; width: 100%; height: 100%; }
 .map img { object-fit: fill; }
 .map canvas { pointer-events: none; }
-.marker { position: absolute; transform: translate(-50%, -50%); padding: 0; width: 18px; height: 18px; border: 2px solid #fff; z-index: 1; box-shadow: 0 1px 4px #18293580; cursor: pointer; }
-.marker.reached { background: var(--green); border-radius: 100%; }
-.marker.unreached { background: var(--rust); border-radius: 3px; }
-.marker[aria-pressed=true] { z-index: 3; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #214e3e; }
+.marker {
+  position: absolute;
+  transform: translate(-50%, -55%);
+  width: 24px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  z-index: 1;
+  cursor: pointer;
+}
+.marker.reached, .legend-mast.yes { --mast-fill: var(--green); }
+.marker.unreached, .legend-mast.no { --mast-fill: var(--rust); }
+.marker::before, .legend-mast::before {
+  position: absolute;
+  inset: 2px;
+  background: var(--mast-fill, var(--tower));
+  clip-path: polygon(47% 0, 53% 0, 53% 15%, 66% 15%, 66% 25%, 56% 25%, 62% 47%, 73% 47%, 73% 57%, 66% 57%, 80% 100%, 65% 100%, 56% 78%, 44% 78%, 35% 100%, 20% 100%, 34% 57%, 27% 57%, 27% 47%, 38% 47%, 44% 25%, 34% 25%, 34% 15%, 47% 15%);
+  content: "";
+}
+.marker::before {
+  filter: brightness(1.08);
+}
+.marker {
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px #132c24);
+}
+.marker.unreached::after, .legend-mast.no::after {
+  position: absolute;
+  width: 48%;
+  height: 2px;
+  top: 49%;
+  right: 0;
+  background: var(--rust);
+  border: 1px solid #fff;
+  border-radius: 2px;
+  transform: rotate(-48deg);
+  content: "";
+}
+.marker[aria-pressed=true] { z-index: 3; background: #fff; box-shadow: 0 0 0 2px #214e3e; }
 .marker-label { display: none; position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 2px 6px; color: var(--ink); background: #fff; border: 1px solid var(--line); font-size: .875rem; font-weight: 650; pointer-events: none; }
 .marker:hover .marker-label, .marker:focus-visible .marker-label, .marker[aria-pressed=true] .marker-label { display: inline-block; }
 .north { position: absolute; right: 10px; top: 10px; color: #fff; background: #173a31; padding: 2px 6px; font-size: .875rem; }
 .legend { display: flex; flex-wrap: wrap; gap: .5rem 1.15rem; padding: .62rem .9rem; border-bottom: 1px solid var(--line); font-size: .875rem; color: var(--muted); }
-.dot, .dash { display: inline-block; width: 10px; height: 10px; margin-right: 5px; }
-.dot.yes { background: var(--green); border-radius: 100%; }
-.dot.no { background: var(--rust); }
-.dot.site { background: var(--tower); transform: rotate(45deg); }
-.dash { width: 16px; height: 4px; border-top: 1px dashed var(--muted); }
+.legend-mast {
+  display: inline-block;
+  position: relative;
+  vertical-align: -.16rem;
+  width: 16px;
+  height: 17px;
+  margin-right: 5px;
+}
+.legend-mast::before { inset: 0; }
+.legend-mast.candidate { --mast-fill: #365f55; }
+.dash { display: inline-block; width: 16px; height: 4px; margin-right: 5px; border-top: 1px dashed var(--muted); }
 .selection { display: grid; grid-template-columns: minmax(135px, 1fr) 2fr; gap: .85rem; padding: .85rem .9rem; }
 .selection p { margin: 0; color: var(--muted); font-size: .925rem; }
 
