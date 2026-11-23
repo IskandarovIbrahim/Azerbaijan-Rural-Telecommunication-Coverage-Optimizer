@@ -91,9 +91,13 @@ def main():
         col, row = inverse * project_point.transform(*coordinates)
         return [round(col / cols, 6), round(row / rows, 6)]
 
+    study = read_json(coarse / "summary.json")["prepared_config"]["study_area"]
+    center_id = study["center_source_id"]
     settlements = [
         dict(zip(("x", "y"), screen_point(item["geometry"]["coordinates"])),
-             id=item["properties"]["settlement_id"], name=item["properties"]["name"])
+             id=item["properties"]["settlement_id"],
+             name=("Pilot center settlement" if item["properties"]["settlement_id"] == center_id
+                   else item["properties"]["name"]))
         for item in read_json(coarse / "settlements.geojson")["features"]
     ]
     boundary = [screen_point(point) for point in
