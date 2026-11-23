@@ -63,6 +63,7 @@ ELEVATION_STOPS = [
 MAP_LABELS = {
     "quba": {"Laza", "Qrız", "Haputlu", "Zeyid"},
     "lahic": {"Lahıc", "Duvaryan", "Tağlabiyan", "Müdri", "Qoydan"},
+    "slavyanka": {"Slavyanka", "Xarxar", "Çanaqçı", "Söyüdlü"},
 }
 
 
@@ -213,6 +214,7 @@ def main():
     areas = {
         "quba": export_area(site, "quba", "Quba", "terrain.png"),
         "lahic": export_area(site, "lahic", "Lahıc, İsmayıllı", "terrain-lahic.png"),
+        "slavyanka": export_area(site, "slavyanka", "Slavyanka, Gədəbəy", "terrain-slavyanka.png"),
     }
     (site / "dist/pilot-data.js").write_text(
         "window.PILOT_DATA = " + json.dumps({"areas": areas}, ensure_ascii=False, separators=(",", ":")) + ";\n",

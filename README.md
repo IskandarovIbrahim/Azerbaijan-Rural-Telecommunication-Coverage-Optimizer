@@ -35,7 +35,7 @@ Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-l
 
 ## Interactive pilot explainer
 
-Open [the website](site/dist/index.html) to explore the Quba and Lahıc simulations. The page works from local files and needs no account or API keys for its controls. The case study explains the problem, goal, method and limits. Select a study area, mast height and candidate spacing, then compare all locations with the greedy and exact selected networks.
+Open [the website](site/dist/index.html) to explore the Quba, Lahıc and Slavyanka simulations. The page works from local files and needs no account or API keys for its controls. The case study explains the problem, goal, method and limits. Select a study area, mast height and candidate spacing, then compare all locations with the greedy and exact selected networks.
 
 To refresh the website data after regenerating the pilot inputs and scenarios, run these commands from the project root:
 
@@ -46,6 +46,9 @@ To refresh the website data after regenerating the pilot inputs and scenarios, r
 .\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py --area lahic
 .\.venv\Scripts\python.exe scripts/compare_tower_selections.py --area lahic
 .\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py --area lahic
+.\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py --area slavyanka
+.\.venv\Scripts\python.exe scripts/compare_tower_selections.py --area slavyanka
+.\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py --area slavyanka
 .\.venv\Scripts\python.exe site/generate_assets.py
 ```
 
