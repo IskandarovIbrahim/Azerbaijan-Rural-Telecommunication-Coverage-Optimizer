@@ -55,7 +55,7 @@
               <h3>Weighted set cover</h3>
               <p class="equation">Minimize &Sigma;<sub>i</sub> <var>c</var><sub>i</sub><var>x</var><sub>i</sub> &nbsp;·&nbsp; &Sigma;<sub>i</sub> <var>a</var><sub>ij</sub><var>x</var><sub>i</sub> &ge; 1 for each reachable settlement <var>j</var></p>
               <p><var>x</var><sub>i</sub> is 1 when site <var>i</var> is selected, <var>c</var><sub>i</sub> is its cost, and <var>a</var><sub>ij</sub> is 1 when that site can serve settlement <var>j</var>. Every reachable settlement must have at least one selected site.</p>
-              <p>Greedy picks the most newly covered settlements per dollar at each step. The exact method uses mixed-integer linear programming to verify the lowest cost. With equal costs, both methods aim to minimize the tower count. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html">SciPy MILP</a></p>
+              <p>Greedy picks the most newly covered settlements per unit of cost at each step. The exact method uses mixed-integer linear programming to verify the lowest cost. With equal costs, both methods aim to minimize the tower count. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html">SciPy MILP</a></p>
             </div>
           </div>
         </details>
@@ -142,7 +142,7 @@
         <p class="cost-equation">Site cost = setup + mast and foundation + distance to mapped road × access rate</p>
         <div class="table-wrap">
           <table id="cost-table">
-            <caption>Estimated upfront cost in USD, rounded to the nearest $100</caption>
+            <caption>Estimated upfront cost in AZN, rounded to the nearest 100 manat</caption>
             <thead><tr><th scope="col">Scenario</th><th scope="col">Reachable</th><th scope="col">Fewest towers, then priced</th><th scope="col">Cost-aware greedy</th><th scope="col">Minimum cost</th></tr></thead>
             <tbody id="cost-rows"></tbody>
           </table>
@@ -151,7 +151,7 @@
         <details class="technical-note">
           <summary>What the estimate includes</summary>
           <p>Setup covers basic site preparation, radio equipment, installation and onsite power equipment. The mast allowance covers the structure and foundation. The access allowance uses straight-line distance to the nearest mapped road as a proxy for site difficulty.</p>
-          <p>These dollar amounts are planning assumptions. The access distance is a map measurement. A deployment budget would also need local quotes, engineering surveys, route measurements, land and permit costs, backhaul, settlement receivers, taxes and operating costs. <a href="https://docs.fcc.gov/public/attachments/DA-20-594A1.pdf">Reference for infrastructure cost categories</a></p>
+          <p>These amounts are planning assumptions. The estimates use the Central Bank of Azerbaijan rate of <a href="https://www.cbar.az/currency/rates?date=23%2F11%2F2026&amp;language=en">1 USD = 1.70 AZN on 23 November 2026</a>. The access distance is a map measurement. A deployment budget would also need local quotes, engineering surveys, route measurements, land and permit costs, backhaul, settlement receivers, taxes and operating costs. <a href="https://docs.fcc.gov/public/attachments/DA-20-594A1.pdf">Reference for infrastructure cost categories</a></p>
         </details>
       </section>
 

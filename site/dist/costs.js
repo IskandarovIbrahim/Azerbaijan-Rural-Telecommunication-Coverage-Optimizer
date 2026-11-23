@@ -3,22 +3,23 @@
 const costData = window.PILOT_DATA.costs;
 const profileControl = document.querySelector("#cost-profile");
 const costRows = document.querySelector("#cost-rows");
-const usd = new Intl.NumberFormat("en-US", {
-  style: "currency", currency: "USD", maximumFractionDigits: 0,
-});
+const aznPerUsd = 1.7;
+const number = new Intl.NumberFormat("en-US", {maximumFractionDigits: 0});
+const formatAzn = amount => number.format(amount) + " AZN";
+const aznFromUsd = amount => formatAzn(amount * aznPerUsd);
 const percent = new Intl.NumberFormat("en-US", {
   style: "percent", maximumFractionDigits: 2,
 });
-const roundedUsd = amount => usd.format(Math.round(amount / 100) * 100);
+const roundedAzn = amount => formatAzn(Math.round(amount * aznPerUsd / 100) * 100);
 const methods = ["minimum_count", "greedy", "exact"];
 
 function renderCosts() {
   const key = profileControl.value;
   const profile = costData.profiles[key];
   document.querySelector("#cost-inputs").textContent =
-    usd.format(profile.core_usd) + " setup per site · " + usd.format(profile.mast_usd["20"]) +
-    " for a 20 m mast · " + usd.format(profile.mast_usd["40"]) +
-    " for a 40 m mast · " + usd.format(profile.access_usd_per_km) + " per km from a mapped road";
+    aznFromUsd(profile.core_usd) + " setup per site · " + aznFromUsd(profile.mast_usd["20"]) +
+    " for a 20 m mast · " + aznFromUsd(profile.mast_usd["40"]) +
+    " for a 40 m mast · " + aznFromUsd(profile.access_usd_per_km) + " per km from a mapped road";
 
   const rows = costData.cases.map(scenario => {
     const row = document.createElement("tr");
@@ -35,7 +36,7 @@ function renderCosts() {
       const count = document.createElement("span");
       count.className = "cost-site-count";
       count.textContent = result.site_count + (result.site_count === 1 ? " tower" : " towers");
-      cell.textContent = roundedUsd(result.total_usd);
+      cell.textContent = roundedAzn(result.total_usd);
       cell.append(count);
       if (method === "exact") cell.className = "minimum-cost";
       row.append(cell);
@@ -51,7 +52,7 @@ function renderCosts() {
   const greedyGap = denseTall.greedy.total_usd - denseTall.exact.total_usd;
   const finding = document.querySelector("#cost-finding");
   finding.textContent = "At 40 m and 3 km spacing, minimum-cost selection reaches nine settlements for " +
-    "about " + roundedUsd(denseTall.exact.total_usd) + ", a saving of about " + roundedUsd(saving) +
+    "about " + roundedAzn(denseTall.exact.total_usd) + ", a saving of about " + roundedAzn(saving) +
     " versus pricing the existing minimum-tower layout. " +
     (greedyGap > 0
       ? "Cost-aware greedy is about " + percent.format(greedyGap / denseTall.exact.total_usd) + " above the minimum."
