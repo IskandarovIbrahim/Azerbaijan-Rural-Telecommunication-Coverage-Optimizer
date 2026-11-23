@@ -10,7 +10,7 @@ from coverage_optimizer.cli import main
 
 
 class CheckConfigTests(unittest.TestCase):
-    def test_loads_provisional_pilot(self) -> None:
+    def test_loads_prepared_pilot(self) -> None:
         path = Path(__file__).resolve().parents[1] / "config" / "quba-pilot.json"
         output = StringIO()
 
@@ -19,7 +19,7 @@ class CheckConfigTests(unittest.TestCase):
 
         self.assertEqual(exit_code, 0)
         self.assertIn("Xınalıq, Quba District, Azerbaijan", output.getvalue())
-        self.assertIn("Study area center is unverified.", output.getvalue())
+        self.assertIn("17.5 km radius", output.getvalue())
         self.assertIn("Radio assumptions are unverified.", output.getvalue())
 
     def test_invalid_config_reports_error(self) -> None:

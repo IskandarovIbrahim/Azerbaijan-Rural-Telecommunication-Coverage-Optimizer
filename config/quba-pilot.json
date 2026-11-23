@@ -3,10 +3,19 @@
   "study_area": {
     "id": "quba-xinaliq",
     "name": "Xınalıq, Quba District, Azerbaijan",
-    "status": "provisional",
-    "center_lon_lat": null,
-    "radius_km": 15,
-    "terrain_buffer_km": null
+    "status": "prepared",
+    "center_name": "Xınalıq",
+    "center_source_id": "osm:node:1798212669",
+    "center_lon_lat": [48.1283975, 41.1800303],
+    "radius_km": 17.5,
+    "terrain_buffer_km": 2
+  },
+  "preparation": {
+    "metric_crs": "EPSG:32639",
+    "vertical_datum": "EGM2008",
+    "raster_cell_m": 90,
+    "candidate_spacing_m": 6000,
+    "max_slope_degrees": 30
   },
   "scenario": {
     "id": "fixed-wireless-downlink",

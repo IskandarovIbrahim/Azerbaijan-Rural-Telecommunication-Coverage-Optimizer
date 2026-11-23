@@ -22,3 +22,7 @@ py -3.11 -m venv .venv
 ```
 
 Use your installed Python version in the first command if it differs. The config check and tests run offline after installation. The [pilot config](config/quba-pilot.json) and [data contract](docs/data-contract.md) define the inputs for the data preparation checkpoint.
+
+## Prepare the Quba pilot data
+
+Follow the [pilot input guide](docs/pilot-inputs.md) to fetch the pinned files, rerun preparation from your local cache, or inspect the results in VS Code.

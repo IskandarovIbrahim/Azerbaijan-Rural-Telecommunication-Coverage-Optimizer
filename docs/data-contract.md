@@ -2,7 +2,7 @@
 
 ## Pilot configuration
 
-[config/quba-pilot.json](../config/quba-pilot.json) is UTF-8 JSON. Version 1 defines a circular study area with a provisional 15 km radius and a single fixed-wireless downlink scenario. A `null` field is unresolved. Data preparation must establish the center and terrain buffer before clipping. Propagation must require a complete set of documented radio assumptions before it produces links. The scaffold's `check-config` command checks the basic file structure and permits these unresolved values.
+[config/quba-pilot.json](../config/quba-pilot.json) is UTF-8 JSON. Version 1 defines a circular study area with a configurable radius and a single fixed-wireless downlink scenario. A `null` field is unresolved. The [pilot input guide](pilot-inputs.md) records the selected study extent and terrain buffer. Propagation must require a complete set of documented radio assumptions before it produces links. The scaffold's `check-config` command checks the basic file structure and permits these unresolved values.
 
 Set `center_lon_lat` to `[longitude, latitude]` in WGS84 decimal degrees using a verified settlement point. Store the study radius and terrain buffer in kilometers, frequency in MHz, transmit power and receiver threshold in dBm, antenna gain in dBi, losses and fade margin in dB, and antenna height above the sampled surface in meters.
 

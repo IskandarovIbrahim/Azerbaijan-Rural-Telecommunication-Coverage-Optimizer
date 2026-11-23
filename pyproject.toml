@@ -9,6 +9,9 @@ description = "Terrain-aware rural wireless planning simulations for Azerbaijan"
 readme = "README.md"
 requires-python = ">=3.11"
 
+[project.optional-dependencies]
+geodata = ["numpy>=1.26,<3", "osmium>=4,<5", "pyproj>=3.6,<4", "rasterio>=1.4,<2"]
+
 [project.scripts]
 coverage-optimizer = "coverage_optimizer.cli:main"
 
