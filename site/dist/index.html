@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore how terrain, mast height and site location affect simulated wireless links around Xınalıq, Azerbaijan.">
+  <title>Signals Across the Mountains</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="pilot-data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <div class="frame top-inner">
+      <a class="brand" href="#top"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span> Rural Signal Lab</a>
+      <nav aria-label="Page"><a href="#explore">Explore</a><a href="#method">How it works</a></nav>
+    </div>
+  </header>
+  <main id="top" class="frame">
+    <section class="intro" aria-labelledby="title">
+      <p class="place">XINALIQ REGION <span></span> AZERBAIJAN</p>
+      <h1 id="title">Signals across<br>the mountains</h1>
+      <p class="intro-copy">How much can a taller mast or a better location help? Explore a wireless planning simulation for 14 settlements around Xınalıq.</p>
+    </section>
+    <section id="explore" class="explorer" aria-label="Interactive coverage explorer">
+      <div class="map-panel">
+        <div class="panel-head">
+          <div><h2>Explore the pilot area</h2><p>Select a settlement to see how it fares.</p></div>
+          <label class="site-toggle"><input type="checkbox" id="show-sites"> Show candidate sites</label>
+        </div>
+        <div class="map" id="map">
+          <img src="terrain.png" alt="Shaded elevation map around Xınalıq">
+          <canvas id="map-overlay" aria-hidden="true"></canvas>
+          <div id="markers" class="markers"></div>
+          <span class="north" aria-label="North">N <span aria-hidden="true">▲</span></span>
+        </div>
+        <div class="legend"><span><i class="dot yes"></i>Reachable</span><span><i class="dot no"></i>No passing link</span><span><i class="dot site"></i>Candidate site</span><span>North up · 35 km study diameter</span></div>
+      </div>
+      <aside class="control-panel" aria-label="Simulation settings">
+        <h2>Change the setup</h2>
+        <fieldset><legend>Mast height</legend>
+          <div class="choices"><label><input type="radio" name="height" value="20" checked><span>20 m</span></label><label><input type="radio" name="height" value="40"><span>40 m</span></label></div>
+        </fieldset>
+        <fieldset><legend>Candidate site spacing</legend>
+          <div class="choices"><label><input type="radio" name="spacing" value="6" checked><span>6 km</span></label><label><input type="radio" name="spacing" value="3"><span>3 km</span></label></div>
+          <p class="hint">Smaller spacing gives the model more locations to consider.</p>
+        </fieldset>
+        <fieldset><legend>Signal model</legend>
+          <div class="choices model"><label><input type="radio" name="model" value="terrain_los" checked><span>With terrain</span></label><label><input type="radio" name="model" value="fspl_only"><span>Signal only</span></label></div>
+        </fieldset>
+        <div class="result" aria-live="polite">
+          <p class="result-label">Settlements reachable</p>
+          <p class="score"><strong id="reachable">5</strong><span> / 14</span></p>
+          <div id="meter" class="meter" aria-hidden="true"></div>
+          <p class="result-detail"><strong id="candidates">19</strong> candidate sites <span></span> <strong id="links">9</strong> usable links</p>
+        </div>
+      </aside>
+    </section>
+    <section class="selection" aria-label="Selected settlement">
+      <div class="selection-title"><p class="eyebrow">SETTLEMENT DETAILS</p><h2 id="settlement-name">Xınalıq</h2></div>
+      <label class="select-wrap">Choose a settlement<select id="settlement"></select></label>
+      <p id="settlement-detail" aria-live="polite"></p>
+    </section>
+    <section id="method" class="method">
+      <div><p class="eyebrow">THE METHOD</p><h2>Why the hills matter</h2><p>Distance weakens a radio signal. A ridge can also cut across the direct path. We tested both effects using mapped settlement locations and a terrain surface with 90 m cells.</p></div>
+      <div><h3>What the counts mean</h3><p>A village is reachable if at least one candidate has a passing link to its receiver point. The next step is to choose the smallest group of sites that reaches those villages.</p><h3>What we found</h3><p>With terrain included, the 3 km grid added three reachable settlements at either height. Raising the mast from 20 m to 40 m added one at either spacing.</p></div>
+    </section>
+    <footer><p>Planning simulation using hypothetical masts and one outdoor receiver point per settlement. Field measurements would be needed to confirm real service.</p><p>Settlement data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> via Geofabrik. <span id="terrain-credit"></span></p></footer>
+  </main>
+</body>
+</html>

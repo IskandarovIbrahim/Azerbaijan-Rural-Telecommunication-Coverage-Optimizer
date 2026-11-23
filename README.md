@@ -30,3 +30,16 @@ Follow the [pilot input guide](docs/pilot-inputs.md) to fetch the pinned files, 
 ## Model radio links
 
 Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-links`. The [radio model guide](docs/radio-model.md) explains the assumptions, results and files used by the next checkpoint.
+
+## Interactive pilot explainer
+
+Open [the website](site/dist/index.html) to explore the four measured simulation cases. The page works from local files and needs no account or API keys for its controls. Select a mast height, candidate spacing and signal model, then choose a settlement to inspect its passing links.
+
+To refresh the website data after regenerating the pilot inputs and scenarios, run these commands from the project root:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py
+.\.venv\Scripts\python.exe site/generate_assets.py
+```
+
+The generator builds a terrain preview from the pinned elevation inputs and reads the run summaries and link tables to make the browser data. The browser presents precomputed results. It shows which settlements are reachable from the candidate pool, ahead of selecting a final set of towers.
