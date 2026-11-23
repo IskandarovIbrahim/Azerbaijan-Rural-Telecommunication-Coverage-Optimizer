@@ -154,6 +154,7 @@ def main():
 
     data = {
         "settlements": settlements, "boundary": boundary, "sites": sites, "cases": cases,
+        "costs": read_json(project / "outputs/quba-costs/comparison.json"),
         "terrainCredit": "Produced using Copernicus WorldDEM™-90. " + manifest["attribution"]["terrain"],
     }
     (site / "dist/pilot-data.js").write_text(

@@ -42,7 +42,8 @@ To refresh the website data after regenerating the pilot inputs and scenarios, r
 ```powershell
 .\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py
 .\.venv\Scripts\python.exe scripts/compare_tower_selections.py
+.\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py
 .\.venv\Scripts\python.exe site/generate_assets.py
 ```
 
-The generator builds a terrain preview from the pinned elevation inputs. It combines the link tables and verified selections into data the browser can read without running the solver.
+The generator combines the terrain preview, modeled links, tower selections and illustrative upfront cost estimates into data the browser can read without running the solver. The cost estimates compare all four scenarios using lower, base and higher assumptions.
