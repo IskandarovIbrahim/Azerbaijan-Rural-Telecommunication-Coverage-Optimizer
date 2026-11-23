@@ -25,8 +25,7 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 }
 .frame {
   width: min(1180px, calc(100% - 2 * var(--gutter)));
-  margin-left: max(var(--gutter), calc((100% - 1430px) / 2));
-  margin-right: auto;
+  margin-inline: auto;
 }
 html { scroll-padding-top: 5.5rem; }
 .top {
