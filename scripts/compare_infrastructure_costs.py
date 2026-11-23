@@ -1,5 +1,6 @@
 """Estimate and compare upfront site costs for the four pilot scenarios."""
 
+from argparse import ArgumentParser
 import json
 from math import isfinite
 from pathlib import Path
@@ -22,13 +23,13 @@ def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def estimate_case(project, case):
+def estimate_case(project, area, case):
     scenario = case["scenario_id"]
     height = case["mast_height_m"]
     spacing = case["grid_spacing_m"]
-    matrix_path = project / "outputs/quba-height-spacing" / scenario / "matrix.json"
+    matrix_path = project / f"outputs/{area}-height-spacing" / scenario / "matrix.json"
     matrix = read_json(matrix_path)
-    baseline_path = project / "outputs/quba-selection" / scenario / "selection.json"
+    baseline_path = project / f"outputs/{area}-selection" / scenario / "selection.json"
     baseline = read_json(baseline_path)
     variant = "terrain_los"
     matrix_hash = sha256(matrix_path)
@@ -36,7 +37,7 @@ def estimate_case(project, case):
             or baseline["model_variant"] != variant or baseline["matrix_sha256"] != matrix_hash):
         raise ValueError(f"tower selection inputs do not match the link matrix for {scenario}")
 
-    sites_path = project / "data/processed/quba-height-spacing" / f"grid-{spacing}m" / "candidate-sites.geojson"
+    sites_path = project / f"data/processed/{area}-height-spacing" / f"grid-{spacing}m" / "candidate-sites.geojson"
     candidate_data = read_json(sites_path)["features"]
     distances = {item["properties"]["site_id"]: item["properties"]["road_distance_m"]
                  for item in candidate_data if item["properties"]["eligible"]}
@@ -86,11 +87,14 @@ def estimate_case(project, case):
 
 
 def main():
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("--area", default="quba", help="Prefix for the scenario inputs and outputs.")
+    area = parser.parse_args().area
     project = Path(__file__).resolve().parents[1]
-    cases = read_json(project / "outputs/quba-height-spacing/comparison.json")["cases"]
-    estimates = [estimate_case(project, case) for case in cases]
+    cases = read_json(project / f"outputs/{area}-height-spacing/comparison.json")["cases"]
+    estimates = [estimate_case(project, area, case) for case in cases]
     result = {"currency": "USD", "profiles": PROFILES, "cases": estimates}
-    output = project / "outputs/quba-costs/comparison.json"
+    output = project / f"outputs/{area}-costs/comparison.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     for case in estimates:

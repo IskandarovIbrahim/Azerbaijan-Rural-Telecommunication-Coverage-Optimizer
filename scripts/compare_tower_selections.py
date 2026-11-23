@@ -1,5 +1,6 @@
-"""Compare terrain-aware tower selection across the four Quba scenarios."""
+"""Compare terrain-aware tower selection across the four pilot scenarios."""
 
+from argparse import ArgumentParser
 import json
 from pathlib import Path
 
@@ -7,9 +8,12 @@ from coverage_optimizer.selection import select_sites
 
 
 def main():
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("--area", default="quba", help="Prefix for the scenario inputs and outputs.")
+    area = parser.parse_args().area
     project = Path(__file__).resolve().parents[1]
-    runs = project / "outputs/quba-height-spacing"
-    output = project / "outputs/quba-selection"
+    runs = project / f"outputs/{area}-height-spacing"
+    output = project / f"outputs/{area}-selection"
     experiments = json.loads((runs / "comparison.json").read_text(encoding="utf-8"))
     results = []
     for case in experiments["cases"]:

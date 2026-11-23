@@ -1,0 +1,93 @@
+{
+    "attribution":  {
+                        "osm":  "© OpenStreetMap contributors, Geofabrik extract · https://www.openstreetmap.org/copyright",
+                        "terrain":  "© DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved."
+                    },
+    "inputs":  [
+                   {
+                       "source_id":  "osm-azerbaijan-2026-11-22",
+                       "publisher":  "Geofabrik and OpenStreetMap contributors",
+                       "dataset":  "Azerbaijan OpenStreetMap extract",
+                       "role":  "osm",
+                       "filename":  "azerbaijan-261122.osm.pbf",
+                       "url":  "https://download.geofabrik.de/asia/azerbaijan/azerbaijan-261122.osm.pbf",
+                       "snapshot":  "2026-11-22T21:20:48Z",
+                       "retrieval_date_utc":  "2026-11-23",
+                       "sha256":  "9f4132980fbc49e7862b1233f59e33d8908e3afaa6a9433ab1a75598ec5042ce",
+                       "license":  "ODbL 1.0",
+                       "license_url":  "https://www.openstreetmap.org/copyright",
+                       "crs":  "EPSG:4326",
+                       "horizontal_resolution":  null,
+                       "vertical_datum":  null,
+                       "preparation":  "Read named village and hamlet nodes and mapped road segments; project to EPSG:32639 and clip demand by metric distance."
+                   },
+                   {
+                       "source_id":  "glo90-n41e048-dem",
+                       "publisher":  "Copernicus Programme via the AWS Open Data Registry",
+                       "dataset":  "Copernicus GLO-90 Digital Surface Model",
+                       "role":  "elevation",
+                       "filename":  "Copernicus_DSM_COG_30_N41_00_E048_00_DEM.tif",
+                       "url":  "https://copernicus-dem-90m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_30_N41_00_E048_00_DEM/Copernicus_DSM_COG_30_N41_00_E048_00_DEM.tif",
+                       "snapshot":  "2021 release on AWS",
+                       "retrieval_date_utc":  "2026-11-23",
+                       "sha256":  "bbebc70f6499dec35d7b6cbf2eecbb75063ba24d0e2b2b547ea2ca162fe3d448",
+                       "license":  "COP-DEM-GLO-90-F",
+                       "license_url":  "https://dataspace.copernicus.eu/sites/default/files/media/files/2025-06/copernicus_contributing_mission_data_access_v2_cop_dem_licenses.pdf",
+                       "crs":  "EPSG:4326",
+                       "horizontal_resolution":  "3 arc seconds",
+                       "vertical_datum":  "EGM2008",
+                       "preparation":  "Bilinear reprojection into a 90 m EPSG:32639 grid with NoData preserved."
+                   },
+                   {
+                       "source_id":  "glo90-n41e048-wbm",
+                       "publisher":  "Copernicus Programme via the AWS Open Data Registry",
+                       "dataset":  "Copernicus GLO-90 Water Body Mask",
+                       "role":  "water_mask",
+                       "filename":  "Copernicus_DSM_COG_30_N41_00_E048_00_WBM.tif",
+                       "url":  "https://copernicus-dem-90m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_30_N41_00_E048_00_DEM/AUXFILES/Copernicus_DSM_COG_30_N41_00_E048_00_WBM.tif",
+                       "snapshot":  "2021 release on AWS",
+                       "retrieval_date_utc":  "2026-11-23",
+                       "sha256":  "36a4567b132172fe8923b94f7c48da6b5a0a0ade4b9404bb3d92363c99e5916c",
+                       "license":  "COP-DEM-GLO-90-F",
+                       "license_url":  "https://dataspace.copernicus.eu/sites/default/files/media/files/2025-06/copernicus_contributing_mission_data_access_v2_cop_dem_licenses.pdf",
+                       "crs":  "EPSG:4326",
+                       "horizontal_resolution":  "3 arc seconds",
+                       "vertical_datum":  null,
+                       "preparation":  "Nearest-neighbor reprojection to the terrain grid for candidate screening."
+                   },
+                   {
+                       "source_id":  "glo90-n40e048-dem",
+                       "publisher":  "Copernicus Programme via the AWS Open Data Registry",
+                       "dataset":  "Copernicus GLO-90 Digital Surface Model",
+                       "role":  "elevation",
+                       "filename":  "Copernicus_DSM_COG_30_N40_00_E048_00_DEM.tif",
+                       "url":  "https://copernicus-dem-90m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_30_N40_00_E048_00_DEM/Copernicus_DSM_COG_30_N40_00_E048_00_DEM.tif",
+                       "snapshot":  "2021 release on AWS",
+                       "retrieval_date_utc":  "2026-11-23",
+                       "sha256":  "89bf786b2accce3e832f9545bccd3cb7856cef7b77c970c33ddc877ed6fab835",
+                       "license":  "COP-DEM-GLO-90-F",
+                       "license_url":  "https://dataspace.copernicus.eu/sites/default/files/media/files/2025-06/copernicus_contributing_mission_data_access_v2_cop_dem_licenses.pdf",
+                       "crs":  "EPSG:4326",
+                       "horizontal_resolution":  "3 arc seconds",
+                       "vertical_datum":  "EGM2008",
+                       "preparation":  "Bilinear reprojection into a 90 m EPSG:32639 grid with NoData preserved."
+                   },
+                   {
+                       "source_id":  "glo90-n40e048-wbm",
+                       "publisher":  "Copernicus Programme via the AWS Open Data Registry",
+                       "dataset":  "Copernicus GLO-90 Water Body Mask",
+                       "role":  "water_mask",
+                       "filename":  "Copernicus_DSM_COG_30_N40_00_E048_00_WBM.tif",
+                       "url":  "https://copernicus-dem-90m.s3.eu-central-1.amazonaws.com/Copernicus_DSM_COG_30_N40_00_E048_00_DEM/AUXFILES/Copernicus_DSM_COG_30_N40_00_E048_00_WBM.tif",
+                       "snapshot":  "2021 release on AWS",
+                       "retrieval_date_utc":  "2026-11-23",
+                       "sha256":  "e6d0e5c75cce18bce8259dc22f3b33c29ab3b6d0a79cada60314e50c5193eda8",
+                       "license":  "COP-DEM-GLO-90-F",
+                       "license_url":  "https://dataspace.copernicus.eu/sites/default/files/media/files/2025-06/copernicus_contributing_mission_data_access_v2_cop_dem_licenses.pdf",
+                       "crs":  "EPSG:4326",
+                       "horizontal_resolution":  "3 arc seconds",
+                       "vertical_datum":  null,
+                       "preparation":  "Nearest-neighbor reprojection to the terrain grid for candidate screening."
+                   }
+               ]
+}

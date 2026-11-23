@@ -1,5 +1,6 @@
-"""Run the four Quba mast-height and grid-spacing combinations offline."""
+"""Run the four pilot mast-height and grid-spacing combinations offline."""
 
+from argparse import ArgumentParser
 import json
 from pathlib import Path
 
@@ -9,12 +10,17 @@ from coverage_optimizer.prepare import prepare_pilot, write_json
 
 
 def main() -> None:
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("--area", default="quba", help="Prefix for the pilot config and source manifest.")
+    parser.add_argument("--fetch", action="store_true", help="Fetch missing pinned inputs.")
+    args = parser.parse_args()
+    area = args.area
     project = Path(__file__).resolve().parents[1]
-    base_path = project / "config" / "quba-pilot.json"
-    manifest = project / "config" / "quba-sources.json"
+    base_path = project / "config" / f"{area}-pilot.json"
+    manifest = project / "config" / f"{area}-sources.json"
     cache = project / "data" / "raw"
-    prepared_root = project / "data" / "processed" / "quba-height-spacing"
-    output = project / "outputs" / "quba-height-spacing"
+    prepared_root = project / "data" / "processed" / f"{area}-height-spacing"
+    output = project / "outputs" / f"{area}-height-spacing"
     base = json.loads(base_path.read_text(encoding="utf-8"))
     results = []
 
@@ -22,7 +28,7 @@ def main() -> None:
         preparation = {**base["preparation"], "candidate_spacing_m": spacing_m}
         prepared = prepared_root / f"grid-{spacing_m}m"
         grid_config = {**base, "preparation": preparation}
-        prepare_pilot(grid_config, manifest, cache, prepared, offline=True)
+        prepare_pilot(grid_config, manifest, cache, prepared, offline=not args.fetch)
 
         for height_m in (20, 40):
             case_id = f"mast-{height_m}m-grid-{spacing_m}m"
