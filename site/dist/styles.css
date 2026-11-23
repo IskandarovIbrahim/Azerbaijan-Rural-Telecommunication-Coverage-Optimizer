@@ -158,7 +158,8 @@ select:disabled { color: var(--muted); opacity: .75; }
   cursor: pointer;
 }
 .marker.reached, .legend-mast.yes { --mast-fill: var(--green); }
-.marker.reached::before, .legend-mast::before {
+.marker.unreached, .legend-blocked { --mast-fill: var(--rust); }
+.marker::before, .legend-mast::before, .legend-blocked::before {
   position: absolute;
   inset: 2px;
   background: var(--mast-fill, var(--tower));
@@ -171,20 +172,19 @@ select:disabled { color: var(--muted); opacity: .75; }
 .marker {
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px #132c24);
 }
-.marker.unreached::before, .legend-blocked::before {
+.marker.unreached::after, .legend-blocked::after {
   position: absolute;
-  inset: 2px;
-  display: grid;
-  place-items: center;
-  box-sizing: border-box;
-  border: 2px solid var(--rust);
-  border-radius: 50%;
-  background: #fff;
-  color: var(--rust);
-  font: 800 1rem/1 system-ui, sans-serif;
-  content: "×";
+  top: 50%;
+  left: 50%;
+  width: 74%;
+  height: 74%;
+  transform: translate(-50%, -50%);
+  background:
+    linear-gradient(45deg, transparent 44%, #c43324 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #c43324 44% 56%, transparent 56%);
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff);
+  content: "";
 }
-.legend-blocked::before { inset: 0; font-size: .8rem; }
 .marker[aria-pressed=true] { z-index: 3; background: #fff; box-shadow: 0 0 0 2px #214e3e; }
 .marker-label { display: none; position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 2px 6px; color: var(--ink); background: #fff; border: 1px solid var(--line); font-size: .875rem; font-weight: 650; pointer-events: none; }
 .marker:hover .marker-label, .marker:focus-visible .marker-label, .marker[aria-pressed=true] .marker-label { display: inline-block; }
@@ -198,7 +198,7 @@ select:disabled { color: var(--muted); opacity: .75; }
   height: 17px;
   margin-right: 5px;
 }
-.legend-mast::before { inset: 0; }
+.legend-mast::before, .legend-blocked::before { inset: 0; }
 .legend-mast.candidate { --mast-fill: #365f55; }
 .dash { display: inline-block; width: 16px; height: 4px; margin-right: 5px; border-top: 1px dashed var(--muted); }
 .selection { display: grid; grid-template-columns: minmax(135px, 1fr) 2fr; gap: .85rem; padding: .85rem .9rem; }
