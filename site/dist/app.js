@@ -134,9 +134,9 @@ function render() {
     : "Turn terrain back on to inspect selected towers.";
   document.querySelector("#reachable").textContent = activeView.reachable;
   document.querySelector("#site-count").textContent = selectedSites?.length ?? activeCase.candidates;
-  document.querySelector("#site-label").textContent = selectedSites ? "selected sites" : "candidate sites";
+  document.querySelector("#site-label").textContent = selectedSites ? "proposed towers" : "candidate sites";
   document.querySelector("#legend-mast").classList.toggle("candidate", !selectedSites);
-  document.querySelector("#legend-site").textContent = selectedSites ? "Selected site" : "Candidate site";
+  document.querySelector("#legend-site").textContent = selectedSites ? "Proposed tower" : "Candidate site";
   document.querySelector("#links").textContent = activeView.links;
 
   for (const settlement of data.settlements) {
@@ -153,9 +153,9 @@ function render() {
   const reason = terrainEnabled && activeCase.variants.fspl_only.settlements[selected].count > 0
     ? "Terrain blocks the paths that pass the signal-strength check."
     : "None of the candidates meets the signal-strength threshold.";
-  const siteType = selectedSites ? "selected" : "candidate";
+  const siteType = selectedSites ? "proposed tower" : "candidate site";
   document.querySelector("#settlement-detail").textContent = detail.count
-    ? detail.count + " " + siteType + (detail.count === 1 ? " site has" : " sites have") +
+    ? detail.count + " " + siteType + (detail.count === 1 ? " has" : "s have") +
       " a usable link. The map draws the strongest passing link."
     : "No displayed site has a usable link. " + reason +
       (terrainDetails.showElevation && detail.obstruction

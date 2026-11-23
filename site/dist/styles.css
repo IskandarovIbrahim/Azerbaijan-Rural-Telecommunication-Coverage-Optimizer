@@ -166,7 +166,8 @@ select:disabled { color: var(--muted); opacity: .75; }
   clip-path: polygon(47% 0, 53% 0, 53% 15%, 66% 15%, 66% 25%, 56% 25%, 62% 47%, 73% 47%, 73% 57%, 66% 57%, 80% 100%, 65% 100%, 56% 78%, 44% 78%, 35% 100%, 20% 100%, 34% 57%, 27% 57%, 27% 47%, 38% 47%, 44% 25%, 34% 25%, 34% 15%, 47% 15%);
   content: "";
 }
-.marker.reached::before, .legend-settlement::before {
+.marker.reached::before, .marker.unreached::before,
+.legend-settlement::before, .legend-blocked::before {
   clip-path: polygon(50% 7%, 94% 44%, 81% 44%, 81% 91%, 59% 91%, 59% 64%, 41% 64%, 41% 91%, 19% 91%, 19% 44%, 6% 44%);
 }
 .marker.reached::before {
