@@ -26,3 +26,7 @@ The 90 m surface grid can miss narrow obstructions or make steep cell boundaries
 Of the 179 links that passed the signal test, 170 were blocked by the modeled terrain. Nine settlements have no usable link from the current candidate set, so requiring all 14 to be covered is infeasible under this scenario. The optimizer should report that condition and can also compare methods on the explicitly reachable subset.
 
 Open `outputs/quba-links/summary.json` for the counts and settlement names. `links.csv` holds one row per pair per variant. `matrix.json` holds the two binary matrices with identical site and settlement ordering, plus site costs and settlement weights. Rows are sites and columns are settlements. Only usable links have a value of 1. The files can be regenerated from the prepared inputs and stay local.
+
+## Mast-height and site-density comparison
+
+See the [four-case experiment](mast-height-and-spacing.md) for the effect of 40 m masts and a 3 km candidate grid.
