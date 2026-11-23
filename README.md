@@ -1,55 +1,54 @@
 # Azerbaijan Rural Telecommunication Coverage Optimizer
 
-A terrain-aware wireless planning study for 14 settlements within 17.5 km of Xınalıq, Azerbaijan. The pipeline prepares mapped settlements and elevation, screens hypothetical mast locations, and estimates which site-to-settlement links pass the signal and line-of-sight checks. The study compares greedy and exact methods for choosing a minimum-cost set of sites.
+A terrain-aware planning study that estimates which rural settlements can be reached by hypothetical wireless towers and which tower locations provide that reach at the lowest modeled cost. Three of five selected study areas have been modeled using the same terrain resolution, radio assumptions, and site-screening rules.
 
-The free-space model found a passing link to all 14 settlements with the baseline setup. Adding terrain reduced that result to five. Doubling the mast height from 20 m to 40 m and reducing candidate spacing from 6 km to 3 km increased modeled reachability to nine. Both algorithms selected five sites to reach the same nine settlements. These are simulated links to outdoor receiver points under stated assumptions.
+## Results
 
-- [Pilot area and data preparation](docs/pilot-inputs.md)
-- [Data sources](docs/data-sources.md)
-- [Radio model and baseline results](docs/radio-model.md)
-- [Mast height and site spacing experiment](docs/mast-height-and-spacing.md)
-- [Tower selection and minimum site count](docs/site-selection.md)
-- [Interactive explainer source](site/dist/index.html)
+The highest-reach scenario used **40 m masts and a 3 km candidate grid** in each modeled area.
 
-## Set up the project in Windows PowerShell
+| Study area | Settlements reached | Minimum towers | Minimum base cost estimate |
+| --- | ---: | ---: | ---: |
+| Quba (Xınalıq) | 9 of 14 | 5 | 885,500 AZN |
+| İsmayıllı (Lahıc) | 64 of 68 | 21 | 3,611,400 AZN |
+| Gədəbəy (Slavyanka) | 67 of 92 | 30 | 5,060,600 AZN |
 
-From the project root, with Python 3.11 or newer:
+In Slavyanka, the exact method reached the same 67 settlements as greedy with one fewer tower. When the two methods used site-specific costs, the exact selection saved about **167,100 AZN** under the base assumptions. The estimates are for upfront infrastructure and use illustrative inputs. [Study areas](docs/study-areas.md) · [Slavyanka results](docs/slavyanka-study.md)
+
+## How it works
+
+1. Use named OpenStreetMap village and hamlet points, a 90 m Copernicus elevation surface, and a grid of candidate sites screened for terrain and water.
+2. Model signal loss and terrain clearance for every tower-to-settlement pair at 20 m and 40 m mast heights and 3 km and 6 km site spacing.
+3. Compare greedy selection with exact mixed-integer optimization on the same terrain-aware links. Run both methods with equal site costs to compare tower count, then with estimated site costs to compare infrastructure budgets.
+
+The simulation uses one outdoor receiver point per settlement, assumes power and backhaul at each candidate, and checks direct line of sight. Field measurements, site surveys, and local quotes would be needed for deployment. [Data sources](docs/data-sources.md) · [Radio model](docs/radio-model.md) · [Tower selection](docs/site-selection.md)
+
+## Interactive map
+
+Open [Signal Atlas](site/dist/index.html) in a browser from your local checkout. Choose a district and scenario to compare all candidates, the greedy layout, and the exact layout. Zoom or drag the map, turn on **Elevation** to inspect a 90 m cell, and select a settlement to see a usable link or an example terrain obstruction when available. The cost table compares lower, base, and higher assumptions in AZN.
+
+## Reproduce on Windows
+
+From the repository root with Python 3.11 and curl installed:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e '.[geodata,optimization]'
-.\.venv\Scripts\coverage-optimizer.exe --help
-.\.venv\Scripts\coverage-optimizer.exe check-config config/quba-pilot.json
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+$python = '.\.venv\Scripts\python.exe'
+& $python -m pip install -e '.[geodata,optimization]'
+& $python -m unittest discover -s tests -v
+
+foreach ($area in 'quba', 'lahic', 'slavyanka') {
+    & $python scripts/compare_mast_height_and_spacing.py --area $area --fetch
+    if ($LASTEXITCODE -ne 0) { throw "Link modeling failed for $area" }
+    & $python scripts/compare_tower_selections.py --area $area
+    if ($LASTEXITCODE -ne 0) { throw "Tower selection failed for $area" }
+    & $python scripts/compare_infrastructure_costs.py --area $area
+    if ($LASTEXITCODE -ne 0) { throw "Cost estimation failed for $area" }
+}
+& $python site/generate_assets.py
 ```
 
-Use your installed Python version in the first command if it differs. The config check and tests run offline after installation. The [pilot config](config/quba-pilot.json) and [data contract](docs/data-contract.md) define the study settings and file formats.
+The source manifests pin file URLs and checksums. Keep the dated Geofabrik extract in the local cache for exact reproduction if the original URL expires. With the input files already cached, omit `--fetch` for an offline run. Outputs are written under `outputs/`, and the site generator exports the precomputed results to `site/dist/`. [Data contract](docs/data-contract.md) · [Lahıc results](docs/lahic-pilot.md)
 
-## Prepare the Quba pilot data
+## Author
 
-Follow the [pilot input guide](docs/pilot-inputs.md) to fetch the pinned files, rerun preparation from your local cache, or inspect the results in VS Code.
-
-## Model radio links
-
-Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-links`. The [radio model guide](docs/radio-model.md) explains the link-budget assumptions and generated files.
-
-## Interactive pilot explainer
-
-Open [the website](site/dist/index.html) to explore the Quba, Lahıc and Slavyanka simulations. The page works from local files and needs no account or API keys for its controls. The case study explains the problem, goal, method and limits. Select a study area, mast height and candidate spacing, then compare all locations with the greedy and exact selected networks.
-
-To refresh the website data after regenerating the pilot inputs and scenarios, run these commands from the project root:
-
-```powershell
-.\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py
-.\.venv\Scripts\python.exe scripts/compare_tower_selections.py
-.\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py
-.\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py --area lahic
-.\.venv\Scripts\python.exe scripts/compare_tower_selections.py --area lahic
-.\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py --area lahic
-.\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py --area slavyanka
-.\.venv\Scripts\python.exe scripts/compare_tower_selections.py --area slavyanka
-.\.venv\Scripts\python.exe scripts/compare_infrastructure_costs.py --area slavyanka
-.\.venv\Scripts\python.exe site/generate_assets.py
-```
-
-The generator combines the terrain preview, modeled links, tower selections and illustrative upfront cost estimates into data the browser can read without running the solver. The cost estimates compare all four scenarios using lower, base and higher assumptions.
+Created by **Ibrahim Iskandarov**. [LinkedIn](https://www.linkedin.com/in/ibrahimiskandarov/) · [GitHub](https://github.com/IskandarovIbrahim) · [Contact](mailto:ibrahim.iskandarov@rwth-aachen.de)
