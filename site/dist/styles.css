@@ -322,17 +322,16 @@ footer p { margin-bottom: .35rem; }
 .map-place-labels { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .map-place-labels span {
   position: absolute;
-  transform: translate(-50%, -50%) scale(var(--map-icon-scale, 1)) translateY(-19px);
-  padding: 1px .27rem;
-  border-radius: 3px;
-  color: #173a31;
-  background: #fffffff0;
+  transform: translate(-50%, -50%) scale(var(--map-icon-scale, 1));
+  color: #203c32;
+  opacity: .74;
+  text-shadow: 0 1px 2px #f4faf1, 0 0 3px #f4faf1;
   white-space: nowrap;
-  font-size: .875rem;
-  line-height: 1.25;
-  font-weight: 700;
+  font-size: .8125rem;
+  line-height: 1.15;
+  font-style: italic;
+  font-weight: 650;
 }
-.map-place-labels .is-selected { color: #fff; background: var(--pine); }
 .elevation-pin {
   position: absolute;
   z-index: 2;

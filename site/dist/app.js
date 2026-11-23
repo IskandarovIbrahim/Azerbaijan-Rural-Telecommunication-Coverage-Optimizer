@@ -28,7 +28,6 @@ let selectedSites;
 const mapCamera = createMapCamera(map, document.querySelector("#map-layer"), drawMap);
 const terrainDetails = createTerrainDetails(map, render);
 function createSettlementControls() {
-  const labeled = new Set(data.mapLabels.map(place => place.id));
   for (const settlement of data.settlements) {
     const option = document.createElement("option");
     option.value = settlement.id;
@@ -40,12 +39,10 @@ function createSettlementControls() {
     marker.className = "marker";
     marker.style.left = (settlement.x * 100) + "%";
     marker.style.top = (settlement.y * 100) + "%";
-    if (!labeled.has(settlement.id)) {
-      const label = document.createElement("span");
-      label.className = "marker-label";
-      label.textContent = settlement.name;
-      marker.append(label);
-    }
+    const label = document.createElement("span");
+    label.className = "marker-label";
+    label.textContent = settlement.name;
+    marker.append(label);
     marker.addEventListener("click", () => {
       selected = settlement.id;
       render();
@@ -149,7 +146,6 @@ function render() {
     marker.setAttribute("aria-label", settlement.name + (reachable ? ", reachable" : ", no passing link"));
     marker.setAttribute("aria-pressed", String(settlement.id === selected));
   }
-  terrainDetails.highlightPlace(selected);
   settlementSelect.value = selected;
   const settlement = data.settlements.find(item => item.id === selected);
   const detail = activeView.settlements[selected];

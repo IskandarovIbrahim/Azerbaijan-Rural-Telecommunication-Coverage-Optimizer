@@ -60,10 +60,26 @@ ELEVATION_STOPS = [
     (4000, [238, 220, 177]),
     (4500, [255, 247, 219]),
 ]
+# Landmark locations are from the pinned OpenStreetMap snapshot.
 MAP_LABELS = {
-    "quba": {"Laza", "Qrız", "Haputlu", "Zeyid"},
-    "lahic": {"Lahıc", "Duvaryan", "Tağlabiyan", "Müdri", "Qoydan"},
-    "slavyanka": {"Slavyanka", "Xarxar", "Çanaqçı", "Söyüdlü"},
+    "quba": [
+        ("Bazardüzü", 47.8581573, 41.2207625),
+        ("Şahdağ", 48.0097153, 41.2706726),
+        ("Tufandağ", 47.9918518, 41.1624215),
+        ("Qrız waterfall", 48.2189776, 41.2246736),
+    ],
+    "lahic": [
+        ("İsmayıllı", 48.1482869, 40.7879263),
+        ("Qaranohur Lake", 48.2509563, 40.8127779),
+        ("Şahnəzər", 48.4397300, 40.9662430),
+        ("Beyqurd Castle", 48.5538391, 40.7508693),
+    ],
+    "slavyanka": [
+        ("Gədəbəy", 45.8103471, 40.5747098),
+        ("Siemens Bridge", 45.7283135, 40.5295896),
+        ("Namərdqala", 45.9011463, 40.5477528),
+        ("Qalaboynu Castle", 45.8195824, 40.7281997),
+    ],
 }
 
 
@@ -200,7 +216,10 @@ def export_area(site, area, label, terrain_image):
     data = {
         "label": label, "terrainImage": terrain_image,
         "elevation": export_elevation(site, area, terrain),
-        "mapLabels": [place for place in settlements if place["name"] in MAP_LABELS[area]],
+        "mapLabels": [
+            dict(zip(("x", "y"), screen_point((lon, lat))), name=name)
+            for name, lon, lat in MAP_LABELS[area]
+        ],
         "settlements": settlements, "boundary": boundary, "sites": sites, "cases": cases,
         "costs": read_json(project / f"outputs/{area}-costs/comparison.json"),
         "terrainCredit": "Produced using Copernicus WorldDEM™-90. " + manifest["attribution"]["terrain"],
