@@ -25,6 +25,7 @@ let preferredNetwork = networkSelect.value;
 let activeCase;
 let activeView;
 let selectedSites;
+const mapCamera = createMapCamera(map, document.querySelector("#map-layer"), drawMap);
 function createSettlementControls() {
   for (const settlement of data.settlements) {
     const option = document.createElement("option");
@@ -53,7 +54,8 @@ function createSettlementControls() {
 function drawMap() {
   const width = map.clientWidth;
   const height = map.clientHeight;
-  const pixelRatio = window.devicePixelRatio || 1;
+  const scale = mapCamera.scale;
+  const pixelRatio = Math.min((window.devicePixelRatio || 1) * scale, 4);
   canvas.width = width * pixelRatio;
   canvas.height = height * pixelRatio;
   context.scale(pixelRatio, pixelRatio);
@@ -63,15 +65,15 @@ function drawMap() {
     else context.lineTo(x * width, y * height);
   }
   context.closePath();
-  context.setLineDash([6, 5]);
-  context.lineWidth = 1.5;
+  context.setLineDash([6 / scale, 5 / scale]);
+  context.lineWidth = 1.5 / scale;
   context.strokeStyle = "rgba(255,255,255,.9)";
   context.stroke();
   context.setLineDash([]);
 
   const sites = data.sites[activeCase.spacing];
   const displayIds = selectedSites ?? Object.keys(sites);
-  const size = selectedSites ? 7 : 4.25;
+  const size = (selectedSites ? 7 : 4.25) / scale;
   const siteColor = selectedSites ? "#975a1a" : "#365f55";
   context.lineCap = "round";
   context.lineJoin = "round";
@@ -88,10 +90,10 @@ function drawMap() {
     context.moveTo(cx - size * .36, cy + size * .4);
     context.lineTo(cx + size * .36, cy + size * .4);
     context.strokeStyle = "#fff";
-    context.lineWidth = selectedSites ? 4 : 2.6;
+    context.lineWidth = (selectedSites ? 4 : 2.6) / scale;
     context.stroke();
     context.strokeStyle = siteColor;
-    context.lineWidth = selectedSites ? 2.2 : 1.2;
+    context.lineWidth = (selectedSites ? 2.2 : 1.2) / scale;
     context.stroke();
   }
 
@@ -103,10 +105,10 @@ function drawMap() {
     context.moveTo(x * width, y * height);
     context.lineTo(settlement.x * width, settlement.y * height);
     context.strokeStyle = "#fff";
-    context.lineWidth = 4;
+    context.lineWidth = 4 / scale;
     context.stroke();
     context.strokeStyle = "#124638";
-    context.lineWidth = 2;
+    context.lineWidth = 2 / scale;
     context.stroke();
   }
 }
@@ -202,6 +204,7 @@ function renderArea() {
   createSettlementControls();
   render();
   renderResults();
+  mapCamera.reset();
 }
 
 document.querySelectorAll(".choices input").forEach(input => input.addEventListener("change", render));
@@ -215,4 +218,7 @@ settlementSelect.addEventListener("change", () => {
 });
 areaSelect.addEventListener("change", renderArea);
 renderArea();
-new ResizeObserver(drawMap).observe(map);
+new ResizeObserver(() => {
+  mapCamera.resize();
+  drawMap();
+}).observe(map);
