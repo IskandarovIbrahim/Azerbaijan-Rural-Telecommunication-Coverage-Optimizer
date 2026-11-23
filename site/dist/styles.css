@@ -2,6 +2,7 @@
 :root {
   color-scheme: light;
   --ink: #173a31;
+  --chrome-surface: #0d332e;
   --muted: #466057;
   --line: #cbdad0;
   --panel: #e6f1e8;
@@ -44,7 +45,7 @@ html { scroll-padding-top: 5.5rem; }
   min-height: 70px;
   margin: 0;
   padding: .72rem clamp(1rem, 3vw, 3rem);
-  background: #0d332e;
+  background: var(--chrome-surface);
   color: #f4fff9;
   border-bottom: 2px solid #dfa95b;
   box-shadow: 0 5px 14px #102e252b;
@@ -223,8 +224,17 @@ tbody tr:last-child > * { border-bottom: 0; }
 .result-context { margin: .65rem 0 0; }
 .use-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
 .use-layout > div { padding-top: .7rem; border-top: 2px solid #a7c8b3; }
-footer { border-top: 1px solid var(--line); margin-top: 1.8rem; padding: 1rem 0 1.6rem; font-size: .875rem; color: var(--muted); }
+footer {
+  margin-top: 1.8rem;
+  padding: 1.15rem 0 1.6rem;
+  border-top: 2px solid #dfa95b;
+  background: var(--chrome-surface);
+  color: #d1e8df;
+  font-size: .875rem;
+}
+footer a { color: #f4fff9; }
 footer p { margin-bottom: .35rem; }
+footer p:last-child { margin-bottom: 0; }
 
 @media (max-width: 760px) {
   :root { --gutter: 14px; }
