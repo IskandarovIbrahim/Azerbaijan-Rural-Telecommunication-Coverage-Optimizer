@@ -19,7 +19,7 @@ Record for every acquired input the source ID, publisher, dataset name, exact UR
 
 ## Modeled links
 
-Each run records one row per candidate–settlement pair with `scenario_id`, model variant, `site_id`, `settlement_id`, distance in meters, FSPL in dB, received power in dBm, margin in dB, LOS state, decision and reason. Unavailable numeric values are null. Keep FSPL-only LOS flagged as unevaluated.
+Each run records one row per eligible candidate–settlement pair per model variant with `scenario_id`, model variant, `site_id`, `settlement_id`, distance in meters, FSPL in dB, received power in dBm, margin in dB, LOS state, minimum clearance in meters, decision and reason. CSV represents unavailable numeric values as empty fields. Keep FSPL-only LOS flagged as unevaluated. Margin is measured after reserving the configured fade margin. The binary matrix uses site rows and settlement columns with matching ID arrays for both variants.
 
 - **Usable** means the link meets the applicable visibility and link-budget constraints. It contributes 1 to the binary coverage matrix.
 - **Unusable** means a known constraint rules it out, such as a blocked path or insufficient received power. It contributes 0.

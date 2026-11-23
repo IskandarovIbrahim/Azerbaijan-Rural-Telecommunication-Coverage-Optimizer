@@ -20,7 +20,7 @@ class CheckConfigTests(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertIn("Xınalıq, Quba District, Azerbaijan", output.getvalue())
         self.assertIn("17.5 km radius", output.getvalue())
-        self.assertIn("Radio assumptions are unverified.", output.getvalue())
+        self.assertIn("Radio settings are assumptions for simulation.", output.getvalue())
 
     def test_invalid_config_reports_error(self) -> None:
         with TemporaryDirectory() as directory:

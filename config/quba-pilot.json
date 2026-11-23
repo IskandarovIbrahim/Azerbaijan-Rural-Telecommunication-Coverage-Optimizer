@@ -19,15 +19,16 @@
   },
   "scenario": {
     "id": "fixed-wireless-downlink",
-    "status": "unverified",
-    "frequency_mhz": null,
-    "transmit_power_dbm": null,
-    "transmit_antenna_gain_dbi": null,
-    "receive_antenna_gain_dbi": null,
-    "system_loss_db": null,
-    "transmit_antenna_height_m": null,
-    "receive_antenna_height_m": null,
-    "receiver_threshold_dbm": null,
-    "fade_margin_db": null
+    "status": "assumed",
+    "frequency_mhz": 900,
+    "transmit_power_dbm": 23,
+    "transmit_antenna_gain_dbi": 8,
+    "receive_antenna_gain_dbi": 3,
+    "system_loss_db": 2,
+    "transmit_antenna_height_m": 20,
+    "receive_antenna_height_m": 4,
+    "receiver_threshold_dbm": -100,
+    "fade_margin_db": 15,
+    "effective_earth_radius_factor": 1.3333333333333333
   }
 }

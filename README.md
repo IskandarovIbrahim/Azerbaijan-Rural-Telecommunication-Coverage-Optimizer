@@ -9,13 +9,13 @@ The first study will focus on a small area around Xınalıq in Quba District, su
 - [First prompt and follow-up template](docs/prompts.md)
 - [Project skills](.agents/skills)
 
-## Run the scaffold in Windows PowerShell
+## Set up the project in Windows PowerShell
 
 From the project root, with Python 3.11 or newer:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\python.exe -m pip install -e '.[geodata]'
 .\.venv\Scripts\coverage-optimizer.exe --help
 .\.venv\Scripts\coverage-optimizer.exe check-config config/quba-pilot.json
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
@@ -26,3 +26,7 @@ Use your installed Python version in the first command if it differs. The config
 ## Prepare the Quba pilot data
 
 Follow the [pilot input guide](docs/pilot-inputs.md) to fetch the pinned files, rerun preparation from your local cache, or inspect the results in VS Code.
+
+## Model radio links
+
+Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-links`. The [radio model guide](docs/radio-model.md) explains the assumptions, results and files used by the next checkpoint.

@@ -22,6 +22,11 @@ def main(argv: list[str] | None = None) -> int:
     prepare.add_argument("--output", type=Path, default=Path("data/processed/quba-pilot"))
     prepare.add_argument("--offline", action="store_true", help="Use only locally cached source files.")
 
+    model = commands.add_parser("model-links", help="Compare free-space and terrain-aware links.")
+    model.add_argument("--config", dest="path", type=Path, default=Path("config/quba-pilot.json"))
+    model.add_argument("--prepared", type=Path, default=Path("data/processed/quba-pilot"))
+    model.add_argument("--output", type=Path, default=Path("outputs/quba-links"))
+
     args = parser.parse_args(argv)
     try:
         config = json.loads(args.path.read_text(encoding="utf-8"))
@@ -66,10 +71,28 @@ def main(argv: list[str] | None = None) -> int:
               f"{summary['candidate_sites']} eligible candidate sites in {args.output}")
         return 0
 
+    if args.command == "model-links":
+        try:
+            from .links import model_links
+        except ModuleNotFoundError as exc:
+            parser.error(f"{exc}. Install the project with the geodata extra: pip install -e .[geodata]")
+
+        try:
+            summary = model_links(config, args.prepared, args.output)
+        except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            parser.error(f"could not model links: {exc}")
+        total = summary["pairs_per_variant"]
+        for variant, result in summary["variants"].items():
+            print(f"{variant}: {result['usable_links']} of {total} modeled links pass")
+        print(f"Results: {args.output}")
+        return 0
+
     print(f"Config loaded: {name} ({radius_km:g} km radius)")
     print(f"Scenario: {scenario_id}")
     if study.get("center_lon_lat") is None:
         print("Study area center is unverified.")
     if scenario.get("status") == "unverified":
         print("Radio assumptions are unverified.")
+    elif scenario.get("status") == "assumed":
+        print("Radio settings are assumptions for simulation.")
     return 0
