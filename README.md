@@ -35,13 +35,14 @@ Once pilot data is prepared, run `.\.venv\Scripts\coverage-optimizer.exe model-l
 
 ## Interactive pilot explainer
 
-Open [the website](site/dist/index.html) to explore the four simulation cases. The page works from local files and needs no account or API keys for its controls. Select a mast height, candidate spacing and signal model, then choose a settlement to inspect its passing links.
+Open [the website](site/dist/index.html) to explore the four simulation cases. The page works from local files and needs no account or API keys for its controls. The case study explains the problem, goal, method and limits. Select a mast height and candidate spacing, then compare all locations with the greedy and exact selected networks.
 
 To refresh the website data after regenerating the pilot inputs and scenarios, run these commands from the project root:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/compare_mast_height_and_spacing.py
+.\.venv\Scripts\python.exe scripts/compare_tower_selections.py
 .\.venv\Scripts\python.exe site/generate_assets.py
 ```
 
-The generator builds a terrain preview from the pinned elevation inputs and reads the run summaries and link tables to make the browser data. The browser presents precomputed results. It shows which settlements are reachable from the candidate pool, ahead of selecting a final set of towers.
+The generator builds a terrain preview from the pinned elevation inputs. It combines the link tables and verified selections into data the browser can read without running the solver.

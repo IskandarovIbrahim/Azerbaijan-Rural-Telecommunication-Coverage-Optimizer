@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore how terrain, mast height and site location affect simulated wireless links around Xınalıq, Azerbaijan.">
-  <title>Signals Across the Mountains</title>
+  <meta name="description" content="A personal engineering case study on terrain-aware wireless planning for rural settlements around Xınalıq, Azerbaijan.">
+  <title>Azerbaijan Rural Telecommunication Coverage Optimizer</title>
   <link rel="stylesheet" href="styles.css">
   <script src="pilot-data.js" defer></script>
   <script src="app.js" defer></script>
@@ -12,60 +12,103 @@
 <body>
   <header class="top">
     <div class="frame top-inner">
-      <a class="brand" href="#top"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span> Rural Signal Lab</a>
-      <nav aria-label="Page"><a href="#explore">Explore</a><a href="#method">How it works</a></nav>
+      <a class="brand" href="#top">Xınalıq wireless planning study</a>
+      <nav aria-label="On this page"><a href="#method">Method</a><a href="#results">Results</a><a href="#explore">Map</a><a href="#use">Applications</a></nav>
     </div>
   </header>
   <main id="top" class="frame">
-    <section class="intro" aria-labelledby="title">
-      <p class="place">XINALIQ REGION <span></span> AZERBAIJAN</p>
-      <h1 id="title">Signals across<br>the mountains</h1>
-      <p class="intro-copy">How much can a taller mast or a better location help? Explore a wireless planning simulation for 14 settlements around Xınalıq.</p>
-    </section>
-    <section id="explore" class="explorer" aria-label="Interactive coverage explorer">
-      <div class="map-panel">
-        <div class="panel-head">
-          <div><h2>Explore the pilot area</h2><p>Select a settlement to see how it fares.</p></div>
-          <label class="site-toggle"><input type="checkbox" id="show-sites"> Show candidate sites</label>
+    <article>
+      <header class="intro">
+        <p class="category">Personal engineering project · Azerbaijan</p>
+        <h1>Azerbaijan Rural Telecommunication Coverage Optimizer</h1>
+        <p class="deck">A study of how mountain terrain affects wireless links around Xınalıq, and how many tower sites a proposed network would need.</p>
+      </header>
+
+      <section class="overview" aria-label="Problem and goal">
+        <div><h2>The problem</h2><p>Two places can be close on a map and still be hard to connect by radio. Around Xınalıq, a ridge can cross the direct path between a proposed mast and a settlement. A signal-strength estimate based on distance alone can miss that obstruction.</p></div>
+        <div><h2>The goal</h2><p>Estimate which settlements have a usable link from at least one candidate site. Then find the fewest towers that can serve those reachable settlements, assuming all sites have the same cost.</p></div>
+      </section>
+
+      <section id="method" class="chapter">
+        <h2>What we did</h2>
+        <dl class="method-list">
+          <div><dt>Prepared the study area</dt><dd>We used OpenStreetMap to identify 14 settlements within 17.5 km of Xınalıq. We used a 90 m elevation surface and screened a grid of hypothetical mast locations for factors like steep slopes and water.</dd></div>
+          <div><dt>Modeled the links</dt><dd>We represented each settlement with one outdoor receiver point. We first estimated usable signal strength over distance, then checked whether the direct path cleared the terrain.</dd></div>
+          <div><dt>Compared site-selection methods</dt><dd>The greedy method chooses the site that serves the most settlements still waiting for a link. The exact solver finds the minimum number of sites. Both methods use the same set of modeled links.</dd></div>
+        </dl>
+      </section>
+
+      <section id="results" class="chapter">
+        <h2>What we found</h2>
+        <p class="reading">In the baseline setup, all 14 settlements had a passing signal-strength link. With terrain included, only five had a passing link. The denser candidate grid added three reachable settlements at either height, and taller masts added one at either spacing.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Terrain-aware simulation and tower selection</caption>
+            <thead><tr><th scope="col">Mast</th><th scope="col">Grid spacing</th><th scope="col">Candidate sites</th><th scope="col">Reachable</th><th scope="col">Minimum towers</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">20 m</th><td>6 km</td><td>19</td><td>5 of 14</td><td>2</td></tr>
+              <tr><th scope="row">40 m</th><td>6 km</td><td>19</td><td>6 of 14</td><td>3</td></tr>
+              <tr><th scope="row">20 m</th><td>3 km</td><td>84</td><td>8 of 14</td><td>5</td></tr>
+              <tr><th scope="row">40 m</th><td>3 km</td><td>84</td><td>9 of 14</td><td>5</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="map" id="map">
-          <img src="terrain.png" alt="Shaded elevation map around Xınalıq">
-          <canvas id="map-overlay" aria-hidden="true"></canvas>
-          <div id="markers" class="markers"></div>
-          <span class="north" aria-label="North">N <span aria-hidden="true">▲</span></span>
+        <p class="finding"><strong>Five towers reached nine settlements in the 40 m, 3 km scenario.</strong> Greedy matched the exact minimum in all four scenarios. In that strongest scenario, the two methods shared three sites and chose different locations for the other two.</p>
+      </section>
+
+      <section id="explore" class="chapter" aria-labelledby="map-title">
+        <h2 id="map-title">Explore the study area</h2>
+        <p class="reading">Change the mast or grid settings, then select a settlement. The map shows one passing link when the displayed sites can reach it.</p>
+        <div class="explorer">
+          <aside class="control-panel" aria-label="Map settings">
+            <fieldset><legend>Mast height</legend><div class="choices">
+              <label><input type="radio" name="height" value="20"><span>20 m</span></label>
+              <label><input type="radio" name="height" value="40" checked><span>40 m</span></label>
+            </div></fieldset>
+            <fieldset><legend>Candidate spacing</legend><div class="choices">
+              <label><input type="radio" name="spacing" value="6"><span>6 km</span></label>
+              <label><input type="radio" name="spacing" value="3" checked><span>3 km</span></label>
+            </div></fieldset>
+            <fieldset><legend>Signal model</legend><div class="choices">
+              <label><input type="radio" name="model" value="terrain_los" checked><span>With terrain</span></label>
+              <label><input type="radio" name="model" value="fspl_only"><span>Signal only</span></label>
+            </div></fieldset>
+            <label class="select-wrap" for="network">Sites shown</label>
+            <select id="network" aria-describedby="network-hint">
+              <option value="all">All candidates</option><option value="greedy">Greedy selection</option><option value="exact" selected>Exact selection</option>
+            </select>
+            <p id="network-hint" class="hint">Selected towers are calculated with terrain included.</p>
+            <p class="metrics" aria-live="polite"><strong id="reachable">9</strong> of 14 reachable<br><strong id="site-count">5</strong> <span id="site-label">selected sites</span> · <strong id="links"></strong> usable links</p>
+          </aside>
+
+          <div class="map-panel">
+            <div id="map" class="map">
+              <img src="terrain.png" alt="Shaded elevation surface around Xınalıq">
+              <canvas id="map-overlay" aria-hidden="true"></canvas>
+              <div id="markers" class="markers"></div>
+              <span class="north" aria-label="North">N <span aria-hidden="true">▲</span></span>
+            </div>
+            <div class="legend"><span><i class="dot yes"></i>Reachable</span><span><i class="dot no"></i>No passing link</span><span><i class="dot site"></i><span id="legend-site">Selected site</span></span><span><i class="dash"></i>Study boundary</span></div>
+            <div class="selection">
+              <label class="select-wrap" for="settlement">Settlement<select id="settlement"></select></label>
+              <div><h3 id="settlement-name">Xınalıq</h3><p id="settlement-detail" aria-live="polite"></p></div>
+            </div>
+          </div>
         </div>
-        <div class="legend"><span><i class="dot yes"></i>Reachable</span><span><i class="dot no"></i>No passing link</span><span><i class="dot site"></i>Candidate site</span><span>North up · 35 km study diameter</span></div>
-      </div>
-      <aside class="control-panel" aria-label="Simulation settings">
-        <h2>Change the setup</h2>
-        <fieldset><legend>Mast height</legend>
-          <div class="choices"><label><input type="radio" name="height" value="20" checked><span>20 m</span></label><label><input type="radio" name="height" value="40"><span>40 m</span></label></div>
-        </fieldset>
-        <fieldset><legend>Candidate site spacing</legend>
-          <div class="choices"><label><input type="radio" name="spacing" value="6" checked><span>6 km</span></label><label><input type="radio" name="spacing" value="3"><span>3 km</span></label></div>
-          <p class="hint">Smaller spacing gives the model more locations to consider.</p>
-        </fieldset>
-        <fieldset><legend>Signal model</legend>
-          <div class="choices model"><label><input type="radio" name="model" value="terrain_los" checked><span>With terrain</span></label><label><input type="radio" name="model" value="fspl_only"><span>Signal only</span></label></div>
-        </fieldset>
-        <div class="result" aria-live="polite">
-          <p class="result-label">Settlements reachable</p>
-          <p class="score"><strong id="reachable">5</strong><span> / 14</span></p>
-          <div id="meter" class="meter" aria-hidden="true"></div>
-          <p class="result-detail"><strong id="candidates">19</strong> candidate sites <span></span> <strong id="links">9</strong> usable links</p>
-        </div>
-      </aside>
-    </section>
-    <section class="selection" aria-label="Selected settlement">
-      <div class="selection-title"><p class="eyebrow">SETTLEMENT DETAILS</p><h2 id="settlement-name">Xınalıq</h2></div>
-      <label class="select-wrap">Choose a settlement<select id="settlement"></select></label>
-      <p id="settlement-detail" aria-live="polite"></p>
-    </section>
-    <section id="method" class="method">
-      <div><p class="eyebrow">THE METHOD</p><h2>Why the hills matter</h2><p>Distance weakens a radio signal. A ridge can also cut across the direct path. We tested both effects using mapped settlement locations and a terrain surface with 90 m cells.</p></div>
-      <div><h3>What the counts mean</h3><p>A village is reachable if at least one candidate has a passing link to its receiver point. The next step is to choose the smallest group of sites that reaches those villages.</p><h3>What we found</h3><p>With terrain included, the 3 km grid added three reachable settlements at either height. Raising the mast from 20 m to 40 m added one at either spacing.</p></div>
-    </section>
-    <footer><p>Planning simulation using hypothetical masts and one outdoor receiver point per settlement. Field measurements would be needed to confirm real service.</p><p>Settlement data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> via Geofabrik. <span id="terrain-credit"></span></p></footer>
+      </section>
+
+      <section id="use" class="chapter">
+        <h2>How this could help</h2>
+        <p class="reading">A planning team could use this workflow to compare layouts, shortlist locations for a site visit, and identify settlements that may need a different approach. In this study, having more locations to choose from made a bigger difference to reachability than doubling mast height.</p>
+        <h3>Limits of the study</h3>
+        <p class="reading">The pilot uses hypothetical equipment, one receiver point per settlement, and a 90 m elevation grid that can miss narrow features. It focuses on direct line of sight and assumes each site has power and an upstream connection. Field measurements and checks for access, permits, and construction costs would be needed before making deployment decisions. Five settlements still had no passing link in any of the tested scenarios.</p>
+      </section>
+    </article>
+
+    <footer>
+      <p><a href="https://github.com/IskandarovIbrahim/Azerbaijan-Rural-Telecommunication-Coverage-Optimizer">Source repository</a></p>
+      <p>Settlement data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> via Geofabrik. <span id="terrain-credit"></span></p>
+    </footer>
   </main>
 </body>
 </html>

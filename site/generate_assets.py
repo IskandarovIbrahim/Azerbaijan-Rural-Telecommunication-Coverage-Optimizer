@@ -12,6 +12,7 @@ import rasterio
 from rasterio.transform import from_origin
 
 from coverage_optimizer.geodata import project_tiles
+from coverage_optimizer.inputs import sha256
 
 
 def read_json(path):
@@ -49,11 +50,29 @@ def shaded_elevation(terrain):
     return np.clip(color, 0, 255).astype("uint8")
 
 
+def summarize_links(links, settlements):
+    by_settlement = {item["id"]: [] for item in settlements}
+    for row in links:
+        if row["decision"] == "usable":
+            by_settlement[row["settlement_id"]].append(row)
+
+    details = {}
+    for identifier, passing in by_settlement.items():
+        best = max(passing, key=lambda row: float(row["margin_db"]), default=None)
+        details[identifier] = {"count": len(passing), "bestSite": best["site_id"] if best else None}
+    return {
+        "settlements": details,
+        "reachable": sum(item["count"] > 0 for item in details.values()),
+        "links": sum(item["count"] for item in details.values()),
+    }
+
+
 def main():
     site = Path(__file__).resolve().parent
     project = site.parent
     prepared = project / "data/processed/quba-height-spacing"
     runs = project / "outputs/quba-height-spacing"
+    selections_root = project / "outputs/quba-selection"
     coarse = prepared / "grid-6000m"
     manifest = read_json(project / "config/quba-sources.json")
     raster_paths = [project / "data/raw" / entry["filename"]
@@ -98,18 +117,35 @@ def main():
         with (run / "links.csv").open(encoding="utf-8", newline="") as stream:
             links = list(csv.DictReader(stream))
         for variant, metrics in report["variants"].items():
-            detail = {}
-            for settlement in settlements:
-                passing = [row for row in links if row["model_variant"] == variant
-                           and row["settlement_id"] == settlement["id"] and row["decision"] == "usable"]
-                best = max(passing, key=lambda row: float(row["margin_db"]), default=None)
-                detail[settlement["id"]] = {"count": len(passing), "bestSite": best["site_id"] if best else None}
-            variants[variant] = {
-                "settlements": detail, "reachable": metrics["reachable_settlements"],
-                "links": metrics["usable_links"],
-            }
+            variants[variant] = summarize_links(
+                (row for row in links if row["model_variant"] == variant), settlements
+            )
+            if (variants[variant]["reachable"] != metrics["reachable_settlements"]
+                    or variants[variant]["links"] != metrics["usable_links"]):
+                raise ValueError(f"link summary mismatch for {case['scenario_id']} / {variant}")
+
+        selection_path = selections_root / case["scenario_id"] / "selection.json"
+        selection = read_json(selection_path)
+        if (selection["matrix_sha256"] != sha256(run / "matrix.json")
+                or selection["scenario_id"] != case["scenario_id"]
+                or selection["model_variant"] != "terrain_los"):
+            raise ValueError(f"selection was generated from different link inputs: {selection_path}")
+        selections = {}
+        for method, result in selection["methods"].items():
+            site_ids = [site["site_id"] for site in result["selected_sites"]]
+            site_set = set(site_ids)
+            if not site_set <= sites[spacing].keys() or len(site_set) != result["selected_site_count"]:
+                raise ValueError(f"invalid selected site IDs in {selection_path}")
+            view = summarize_links(
+                (row for row in links if row["model_variant"] == "terrain_los"
+                 and row["site_id"] in site_set), settlements
+            )
+            if view["reachable"] != result["covered_settlement_count"]:
+                raise ValueError(f"selected network coverage mismatch in {selection_path}")
+            selections[method] = {**view, "siteIds": site_ids}
         cases[f"{height}-{spacing}"] = {
-            "spacing": spacing, "candidates": case["eligible_candidate_sites"], "variants": variants,
+            "spacing": spacing, "candidates": case["eligible_candidate_sites"],
+            "variants": variants, "selections": selections,
         }
 
     data = {

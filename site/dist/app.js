@@ -6,11 +6,13 @@ const canvas = document.querySelector("#map-overlay");
 const context = canvas.getContext("2d");
 const markerLayer = document.querySelector("#markers");
 const settlementSelect = document.querySelector("#settlement");
-const sitesToggle = document.querySelector("#show-sites");
+const networkSelect = document.querySelector("#network");
 const markerById = new Map();
 let selected = data.settlements[0].id;
+let preferredNetwork = networkSelect.value;
 let activeCase;
-let variant;
+let activeView;
+let selectedSites;
 document.querySelector("#terrain-credit").textContent = data.terrainCredit;
 
 for (const settlement of data.settlements) {
@@ -28,62 +30,65 @@ for (const settlement of data.settlements) {
   label.className = "marker-label";
   label.textContent = settlement.name;
   marker.append(label);
-  marker.addEventListener("click", () => { selected = settlement.id; render(); });
+  marker.addEventListener("click", () => {
+    selected = settlement.id;
+    render();
+  });
   markerLayer.append(marker);
   markerById.set(settlement.id, marker);
 }
 
 function drawMap() {
-  if (!activeCase) return;
   const width = map.clientWidth;
   const height = map.clientHeight;
   const pixelRatio = window.devicePixelRatio || 1;
   canvas.width = width * pixelRatio;
   canvas.height = height * pixelRatio;
   context.scale(pixelRatio, pixelRatio);
-  const boundary = data.boundary;
   context.beginPath();
-  boundary.forEach(([x, y], index) => index ? context.lineTo(x * width, y * height) : context.moveTo(x * width, y * height));
+  for (const [index, [x, y]] of data.boundary.entries()) {
+    if (index === 0) context.moveTo(x * width, y * height);
+    else context.lineTo(x * width, y * height);
+  }
   context.closePath();
   context.setLineDash([6, 5]);
   context.lineWidth = 1.5;
-  context.strokeStyle = "rgba(255,255,255,.86)";
+  context.strokeStyle = "rgba(255,255,255,.9)";
   context.stroke();
   context.setLineDash([]);
+
   const sites = data.sites[activeCase.spacing];
-  if (sitesToggle.checked) {
-    context.fillStyle = "#385a78";
-    context.strokeStyle = "#f3f7f0";
-    context.lineWidth = 1;
-    for (const [x, y] of Object.values(sites)) {
-      context.beginPath();
-      context.moveTo(x * width, y * height - 4);
-      context.lineTo(x * width + 4, y * height);
-      context.lineTo(x * width, y * height + 4);
-      context.lineTo(x * width - 4, y * height);
-      context.closePath();
-      context.fill();
-      context.stroke();
-    }
+  const displayIds = selectedSites ?? Object.keys(sites);
+  const radius = selectedSites ? 6 : 3.5;
+  context.fillStyle = selectedSites ? "#203f70" : "#46617b";
+  context.strokeStyle = "#f3f7fa";
+  context.lineWidth = 1;
+  for (const id of displayIds) {
+    const [x, y] = sites[id];
+    const cx = x * width;
+    const cy = y * height;
+    context.beginPath();
+    context.moveTo(cx, cy - radius);
+    context.lineTo(cx + radius, cy);
+    context.lineTo(cx, cy + radius);
+    context.lineTo(cx - radius, cy);
+    context.closePath();
+    context.fill();
+    context.stroke();
   }
-  const detail = variant.settlements[selected];
+
+  const detail = activeView.settlements[selected];
   if (detail.bestSite) {
     const [x, y] = sites[detail.bestSite];
     const settlement = data.settlements.find(item => item.id === selected);
     context.beginPath();
     context.moveTo(x * width, y * height);
     context.lineTo(settlement.x * width, settlement.y * height);
-    context.strokeStyle = "#f7fff8";
-    context.lineWidth = 5;
+    context.strokeStyle = "#fff";
+    context.lineWidth = 4;
     context.stroke();
-    context.strokeStyle = "#175748";
+    context.strokeStyle = "#124638";
     context.lineWidth = 2;
-    context.stroke();
-    context.beginPath();
-    context.arc(x * width, y * height, 5, 0, Math.PI * 2);
-    context.fillStyle = "#175748";
-    context.fill();
-    context.strokeStyle = "white";
     context.stroke();
   }
 }
@@ -92,40 +97,53 @@ function render() {
   const height = document.querySelector('input[name="height"]:checked').value;
   const spacing = document.querySelector('input[name="spacing"]:checked').value;
   const mode = document.querySelector('input[name="model"]:checked').value;
+  const terrainEnabled = mode === "terrain_los";
   activeCase = data.cases[height + "-" + spacing];
-  variant = activeCase.variants[mode];
-  document.querySelector("#reachable").textContent = variant.reachable;
-  document.querySelector("#candidates").textContent = activeCase.candidates;
-  document.querySelector("#links").textContent = variant.links;
-  document.querySelector("#meter").replaceChildren(...data.settlements.map((_, index) => {
-    const segment = document.createElement("i");
-    segment.className = index < variant.reachable ? "on" : "";
-    return segment;
-  }));
+  networkSelect.disabled = !terrainEnabled;
+  networkSelect.value = terrainEnabled ? preferredNetwork : "all";
+  activeView = networkSelect.value === "all"
+    ? activeCase.variants[mode]
+    : activeCase.selections[networkSelect.value];
+  selectedSites = activeView.siteIds;
+  document.querySelector("#network-hint").textContent = terrainEnabled
+    ? "Both selections use terrain-aware links."
+    : "Turn terrain back on to inspect selected towers.";
+  document.querySelector("#reachable").textContent = activeView.reachable;
+  document.querySelector("#site-count").textContent = selectedSites?.length ?? activeCase.candidates;
+  document.querySelector("#site-label").textContent = selectedSites ? "selected sites" : "candidate sites";
+  document.querySelector("#legend-site").textContent = selectedSites ? "Selected site" : "Candidate site";
+  document.querySelector("#links").textContent = activeView.links;
 
   for (const settlement of data.settlements) {
     const marker = markerById.get(settlement.id);
-    const reachable = variant.settlements[settlement.id].count > 0;
+    const reachable = activeView.settlements[settlement.id].count > 0;
     marker.className = "marker " + (reachable ? "reached" : "unreached");
     marker.setAttribute("aria-label", settlement.name + (reachable ? ", reachable" : ", no passing link"));
     marker.setAttribute("aria-pressed", String(settlement.id === selected));
   }
   settlementSelect.value = selected;
   const settlement = data.settlements.find(item => item.id === selected);
-  const detail = variant.settlements[selected];
+  const detail = activeView.settlements[selected];
   document.querySelector("#settlement-name").textContent = settlement.name;
-  const reason = mode === "terrain_los" && activeCase.variants.fspl_only.settlements[selected].count > 0
-    ? "At least one site passes the signal-strength check, but the terrain model blocks those paths."
-    : "The assumed signal is too weak from the evaluated sites.";
+  const reason = terrainEnabled && activeCase.variants.fspl_only.settlements[selected].count > 0
+    ? "Terrain blocks the paths that pass the signal-strength check."
+    : "None of the candidates meets the signal-strength threshold.";
+  const siteType = selectedSites ? "selected" : "candidate";
   document.querySelector("#settlement-detail").textContent = detail.count
-    ? detail.count + " candidate " + (detail.count === 1 ? "site has" : "sites have") +
-      " a passing link. The map draws the passing link with the strongest signal."
-    : "No candidate has a passing link here. " + reason;
+    ? detail.count + " " + siteType + (detail.count === 1 ? " site has" : " sites have") +
+      " a usable link. The map draws the strongest passing link."
+    : "No displayed site has a usable link. " + reason;
   drawMap();
 }
 
 document.querySelectorAll(".choices input").forEach(input => input.addEventListener("change", render));
-sitesToggle.addEventListener("change", drawMap);
-settlementSelect.addEventListener("change", () => { selected = settlementSelect.value; render(); });
-window.addEventListener("resize", drawMap);
+networkSelect.addEventListener("change", () => {
+  preferredNetwork = networkSelect.value;
+  render();
+});
+settlementSelect.addEventListener("change", () => {
+  selected = settlementSelect.value;
+  render();
+});
+new ResizeObserver(drawMap).observe(map);
 render();
