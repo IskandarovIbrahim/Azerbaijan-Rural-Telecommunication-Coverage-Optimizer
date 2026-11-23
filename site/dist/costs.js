@@ -1,6 +1,6 @@
 "use strict";
 
-const costData = window.PILOT_DATA.costs;
+const costArea = document.querySelector("#study-area");
 const profileControl = document.querySelector("#cost-profile");
 const costRows = document.querySelector("#cost-rows");
 const aznPerUsd = 1.7;
@@ -14,6 +14,7 @@ const roundedAzn = amount => formatAzn(Math.round(amount * aznPerUsd / 100) * 10
 const methods = ["minimum_count", "greedy", "exact"];
 
 function renderCosts() {
+  const costData = window.PILOT_DATA.areas[costArea.value].costs;
   const key = profileControl.value;
   const profile = costData.profiles[key];
   document.querySelector("#cost-inputs").textContent =
@@ -47,17 +48,19 @@ function renderCosts() {
 
   const denseTall = costData.cases.find(scenario =>
     scenario.mast_height_m === 40 && scenario.grid_spacing_m === 3000
-  ).estimates[key];
-  const saving = denseTall.minimum_count.total_usd - denseTall.exact.total_usd;
-  const greedyGap = denseTall.greedy.total_usd - denseTall.exact.total_usd;
+  );
+  const estimates = denseTall.estimates[key];
+  const saving = estimates.minimum_count.total_usd - estimates.exact.total_usd;
+  const greedyGap = estimates.greedy.total_usd - estimates.exact.total_usd;
   const finding = document.querySelector("#cost-finding");
-  finding.textContent = "At 40 m and 3 km spacing, minimum-cost selection reaches nine settlements for " +
-    "about " + roundedAzn(denseTall.exact.total_usd) + ", a saving of about " + roundedAzn(saving) +
+  finding.textContent = "At 40 m and 3 km spacing, minimum-cost selection reaches " + denseTall.reachable_count + " settlements for " +
+    "about " + roundedAzn(estimates.exact.total_usd) + ", a saving of about " + roundedAzn(saving) +
     " versus pricing the existing minimum-tower layout. " +
     (greedyGap > 0
-      ? "Cost-aware greedy is about " + percent.format(greedyGap / denseTall.exact.total_usd) + " above the minimum."
+      ? "Cost-aware greedy is about " + percent.format(greedyGap / estimates.exact.total_usd) + " above the minimum."
       : "Cost-aware greedy matches the minimum.");
 }
 
 profileControl.addEventListener("change", renderCosts);
+costArea.addEventListener("change", renderCosts);
 renderCosts();

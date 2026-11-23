@@ -254,3 +254,13 @@ footer p { margin-bottom: .35rem; }
 @media (max-width: 700px) {
   .formula-grid, .cost-controls { grid-template-columns: 1fr; gap: .6rem; }
 }
+
+.area-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: .5rem 1rem;
+  margin: 0 0 .85rem;
+}
+.area-picker label { min-width: min(100%, 15rem); }
+.area-picker p { margin: 0 0 .3rem; color: var(--muted); }

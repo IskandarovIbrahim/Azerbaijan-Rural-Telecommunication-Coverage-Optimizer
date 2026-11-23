@@ -10,7 +10,8 @@ function updateHeader() {
 window.addEventListener("scroll", updateHeader, { passive: true });
 updateHeader();
 
-const data = window.PILOT_DATA;
+const areas = window.PILOT_DATA.areas;
+const areaSelect = document.querySelector("#study-area");
 const map = document.querySelector("#map");
 const canvas = document.querySelector("#map-overlay");
 const context = canvas.getContext("2d");
@@ -18,34 +19,35 @@ const markerLayer = document.querySelector("#markers");
 const settlementSelect = document.querySelector("#settlement");
 const networkSelect = document.querySelector("#network");
 const markerById = new Map();
-let selected = data.settlements[0].id;
+let data;
+let selected;
 let preferredNetwork = networkSelect.value;
 let activeCase;
 let activeView;
 let selectedSites;
-document.querySelector("#terrain-credit").textContent = data.terrainCredit;
+function createSettlementControls() {
+  for (const settlement of data.settlements) {
+    const option = document.createElement("option");
+    option.value = settlement.id;
+    option.textContent = settlement.name;
+    settlementSelect.append(option);
 
-for (const settlement of data.settlements) {
-  const option = document.createElement("option");
-  option.value = settlement.id;
-  option.textContent = settlement.name;
-  settlementSelect.append(option);
-
-  const marker = document.createElement("button");
-  marker.type = "button";
-  marker.className = "marker";
-  marker.style.left = (settlement.x * 100) + "%";
-  marker.style.top = (settlement.y * 100) + "%";
-  const label = document.createElement("span");
-  label.className = "marker-label";
-  label.textContent = settlement.name;
-  marker.append(label);
-  marker.addEventListener("click", () => {
-    selected = settlement.id;
-    render();
-  });
-  markerLayer.append(marker);
-  markerById.set(settlement.id, marker);
+    const marker = document.createElement("button");
+    marker.type = "button";
+    marker.className = "marker";
+    marker.style.left = (settlement.x * 100) + "%";
+    marker.style.top = (settlement.y * 100) + "%";
+    const label = document.createElement("span");
+    label.className = "marker-label";
+    label.textContent = settlement.name;
+    marker.append(label);
+    marker.addEventListener("click", () => {
+      selected = settlement.id;
+      render();
+    });
+    markerLayer.append(marker);
+    markerById.set(settlement.id, marker);
+  }
 }
 
 function drawMap() {
@@ -153,6 +155,55 @@ function render() {
   drawMap();
 }
 
+function renderResults() {
+  const results = Object.values(data.cases);
+  const total = data.settlements.length;
+  const terrainCount = item => item.variants.terrain_los.reachable;
+  const best = results.reduce((winner, item) => terrainCount(item) > terrainCount(winner) ? item : winner);
+  const bestCount = terrainCount(best);
+  document.querySelector("#best-reach").textContent = bestCount + " of " + total;
+  document.querySelector("#best-description").textContent =
+    "Settlements reachable with " + best.selections.exact.siteIds.length + " " + best.height +
+    " m towers chosen from the " + best.spacing + " km grid.";
+  const ties = results.filter(item => item.selections.greedy.siteIds.length === item.selections.exact.siteIds.length).length;
+  document.querySelector("#method-agreement").textContent =
+    "Greedy matched the minimum tower count in " + ties + " of " + results.length + " scenarios.";
+  document.querySelector("#result-context").textContent = (total - bestCount) +
+    " of " + total + " settlements lack a passing link in the highest-reach scenario.";
+  document.querySelector("#result-rows").replaceChildren(...results.map(item => {
+    const row = document.createElement("tr");
+    const mast = document.createElement("th");
+    mast.scope = "row";
+    mast.textContent = item.height + " m";
+    row.append(mast);
+    for (const value of [item.spacing + " km", item.candidates, terrainCount(item) + " of " + total,
+                         item.selections.exact.siteIds.length]) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    }
+    return row;
+  }));
+}
+
+function renderArea() {
+  data = areas[areaSelect.value];
+  selected = data.settlements[0].id;
+  const terrain = map.querySelector("img");
+  terrain.src = data.terrainImage;
+  terrain.alt = "Shaded elevation surface for " + data.label;
+  document.querySelector("#settlement-total").textContent = data.settlements.length;
+  document.querySelector("#area-result-name").textContent = data.label;
+  document.querySelector("#area-cost-name").textContent = data.label;
+  document.querySelector("#terrain-credit").textContent = data.terrainCredit;
+  markerLayer.replaceChildren();
+  settlementSelect.replaceChildren();
+  markerById.clear();
+  createSettlementControls();
+  render();
+  renderResults();
+}
+
 document.querySelectorAll(".choices input").forEach(input => input.addEventListener("change", render));
 networkSelect.addEventListener("change", () => {
   preferredNetwork = networkSelect.value;
@@ -162,5 +213,6 @@ settlementSelect.addEventListener("change", () => {
   selected = settlementSelect.value;
   render();
 });
+areaSelect.addEventListener("change", renderArea);
+renderArea();
 new ResizeObserver(drawMap).observe(map);
-render();

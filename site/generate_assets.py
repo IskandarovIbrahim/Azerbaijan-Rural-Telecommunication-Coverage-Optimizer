@@ -67,14 +67,13 @@ def summarize_links(links, settlements):
     }
 
 
-def main():
-    site = Path(__file__).resolve().parent
+def export_area(site, area, label, terrain_image):
     project = site.parent
-    prepared = project / "data/processed/quba-height-spacing"
-    runs = project / "outputs/quba-height-spacing"
-    selections_root = project / "outputs/quba-selection"
+    prepared = project / f"data/processed/{area}-height-spacing"
+    runs = project / f"outputs/{area}-height-spacing"
+    selections_root = project / f"outputs/{area}-selection"
     coarse = prepared / "grid-6000m"
-    manifest = read_json(project / "config/quba-sources.json")
+    manifest = read_json(project / f"config/{area}-sources.json")
     raster_paths = [project / "data/raw" / entry["filename"]
                     for entry in manifest["inputs"] if entry["role"] == "elevation"]
     with rasterio.open(coarse / "terrain.tif") as raster:
@@ -96,7 +95,7 @@ def main():
     settlements = [
         dict(zip(("x", "y"), screen_point(item["geometry"]["coordinates"])),
              id=item["properties"]["settlement_id"],
-             name=("Pilot center settlement" if item["properties"]["settlement_id"] == center_id
+             name=("Pilot center settlement" if area == "quba" and item["properties"]["settlement_id"] == center_id
                    else item["properties"]["name"]))
         for item in read_json(coarse / "settlements.geojson")["features"]
     ]
@@ -148,20 +147,30 @@ def main():
                 raise ValueError(f"selected network coverage mismatch in {selection_path}")
             selections[method] = {**view, "siteIds": site_ids}
         cases[f"{height}-{spacing}"] = {
-            "spacing": spacing, "candidates": case["eligible_candidate_sites"],
+            "height": height, "spacing": spacing, "candidates": case["eligible_candidate_sites"],
             "variants": variants, "selections": selections,
         }
 
     data = {
+        "label": label, "terrainImage": terrain_image,
         "settlements": settlements, "boundary": boundary, "sites": sites, "cases": cases,
-        "costs": read_json(project / "outputs/quba-costs/comparison.json"),
+        "costs": read_json(project / f"outputs/{area}-costs/comparison.json"),
         "terrainCredit": "Produced using Copernicus WorldDEM™-90. " + manifest["attribution"]["terrain"],
     }
+    write_png(site / "dist" / terrain_image, shaded_elevation(terrain))
+    return data
+
+
+def main():
+    site = Path(__file__).resolve().parent
+    areas = {
+        "quba": export_area(site, "quba", "Quba pilot", "terrain.png"),
+        "lahic": export_area(site, "lahic", "Lahıc, İsmayıllı", "terrain-lahic.png"),
+    }
     (site / "dist/pilot-data.js").write_text(
-        "window.PILOT_DATA = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n",
+        "window.PILOT_DATA = " + json.dumps({"areas": areas}, ensure_ascii=False, separators=(",", ":")) + ";\n",
         encoding="utf-8",
     )
-    write_png(site / "dist/terrain.png", shaded_elevation(terrain))
 
 
 if __name__ == "__main__":

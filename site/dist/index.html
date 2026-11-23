@@ -26,7 +26,7 @@
         </div>
         <aside class="scope" aria-label="Study scope">
           <h2>Current scope</h2>
-          <p><strong>14 settlements</strong> in the first mountainous pilot. Additional rural areas are planned.</p>
+          <p><strong>Two rural pilots</strong> modeled out of five selected study areas.</p>
         </aside>
       </header>
 
@@ -64,6 +64,15 @@
       <section id="explore" class="chapter" aria-labelledby="map-title">
         <h2 id="map-title">Explore the pilot map</h2>
         <p class="reading">Change the mast height or site spacing, then select a settlement to inspect a passing link.</p>
+        <div class="area-picker">
+          <label class="select-wrap" for="study-area">Study area
+            <select id="study-area">
+              <option value="quba" selected>Quba pilot</option>
+              <option value="lahic">Lahıc, İsmayıllı</option>
+            </select>
+          </label>
+          <p>Two of five areas have simulated results.</p>
+        </div>
         <div class="explorer">
           <aside class="control-panel" aria-label="Map settings">
             <fieldset><legend>Tower mast height</legend><div class="choices">
@@ -83,7 +92,7 @@
               <option value="all">All candidates</option><option value="greedy">Greedy selection</option><option value="exact" selected>Exact selection</option>
             </select>
             <p id="network-hint" class="hint">Selected towers are calculated with terrain included.</p>
-            <p class="metrics" aria-live="polite"><strong id="reachable">9</strong> of 14 reachable<br><strong id="site-count">5</strong> <span id="site-label">selected sites</span> · <strong id="links"></strong> usable links</p>
+            <p class="metrics" aria-live="polite"><strong id="reachable">9</strong> of <span id="settlement-total">14</span> reachable<br><strong id="site-count">5</strong> <span id="site-label">selected sites</span> · <strong id="links"></strong> usable links</p>
           </aside>
 
           <div class="map-panel">
@@ -106,24 +115,19 @@
         <h2>What the pilot found</h2>
         <div class="results-layout">
           <aside class="result-note">
-            <strong>9 of 14</strong>
-            <p>Settlements reachable with five 40 m towers chosen from the 3 km grid.</p>
-            <p>Greedy and exact selection matched the minimum tower count in all four scenarios.</p>
+            <strong id="best-reach"></strong>
+            <p id="best-description"></p>
+            <p id="method-agreement"></p>
           </aside>
           <div class="table-wrap">
             <table>
-              <caption>Terrain-aware results by scenario</caption>
+              <caption>Terrain-aware results · <span id="area-result-name"></span></caption>
               <thead><tr><th scope="col">Mast</th><th scope="col">Grid spacing</th><th scope="col">Candidate sites</th><th scope="col">Reachable</th><th scope="col">Minimum towers</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">20 m</th><td>6 km</td><td>19</td><td>5 of 14</td><td>2</td></tr>
-                <tr><th scope="row">40 m</th><td>6 km</td><td>19</td><td>6 of 14</td><td>3</td></tr>
-                <tr><th scope="row">20 m</th><td>3 km</td><td>84</td><td>8 of 14</td><td>5</td></tr>
-                <tr><th scope="row">40 m</th><td>3 km</td><td>84</td><td>9 of 14</td><td>5</td></tr>
-              </tbody>
+              <tbody id="result-rows"></tbody>
             </table>
           </div>
         </div>
-        <p class="reading result-context">In this pilot, the denser grid added three reachable settlements at either height. Taller masts added one at either spacing. Five settlements had no passing link in any tested scenario.</p>
+        <p class="reading result-context" id="result-context"></p>
       </section>
 
       <section id="costs" class="chapter">
@@ -142,7 +146,7 @@
         <p class="cost-equation">Site cost = setup + mast and foundation + distance to mapped road × access rate</p>
         <div class="table-wrap">
           <table id="cost-table">
-            <caption>Estimated upfront cost in AZN, rounded to the nearest 100 manat</caption>
+            <caption><span id="area-cost-name"></span> · Estimated upfront cost in AZN, rounded to the nearest 100 manat</caption>
             <thead><tr><th scope="col">Scenario</th><th scope="col">Reachable</th><th scope="col">Fewest towers, then priced</th><th scope="col">Cost-aware greedy</th><th scope="col">Minimum cost</th></tr></thead>
             <tbody id="cost-rows"></tbody>
           </table>
