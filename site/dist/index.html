@@ -28,7 +28,7 @@
         </div>
         <aside class="scope" aria-label="Study scope">
           <h2>Current scope</h2>
-          <p><strong>Two rural pilots</strong> modeled out of five selected study areas.</p>
+          <p><strong>Two rural study areas</strong> modeled out of five selected.</p>
         </aside>
       </header>
 
@@ -64,12 +64,12 @@
       </section>
 
       <section id="explore" class="chapter" aria-labelledby="map-title">
-        <h2 id="map-title">Explore the pilot map</h2>
+        <h2 id="map-title">Explore the coverage map</h2>
         <p class="reading">Change the mast height or site spacing, then select a settlement to inspect a passing link.</p>
         <div class="area-picker">
           <label class="select-wrap" for="study-area">Study area
             <select id="study-area">
-              <option value="quba" selected>Quba pilot</option>
+              <option value="quba" selected>Quba</option>
               <option value="lahic">Lahıc, İsmayıllı</option>
             </select>
           </label>
@@ -107,7 +107,7 @@
             </div>
             <div id="map" class="map" role="region" tabindex="0" aria-label="Terrain map" aria-describedby="map-help">
               <div id="map-layer" class="map-layer">
-                <img src="terrain.png" alt="Shaded elevation surface for the pilot area" draggable="false">
+                <img src="terrain.png" alt="Shaded elevation surface for the study area" draggable="false">
                 <canvas id="map-overlay" aria-hidden="true"></canvas>
                 <div class="map-place-labels" aria-hidden="true"></div>
                 <div class="elevation-pin" hidden aria-hidden="true"></div>
@@ -126,14 +126,14 @@
             <div class="legend"><span><i class="legend-mast yes" aria-hidden="true"></i>Reachable settlement</span><span><i class="legend-blocked" aria-hidden="true"></i>No passing link</span><span><i class="legend-mast" id="legend-mast" aria-hidden="true"></i><span id="legend-site">Selected site</span></span><span><i class="dash"></i>Study boundary</span></div>
             <div class="selection">
               <label class="select-wrap" for="settlement">Settlement<select id="settlement"></select></label>
-              <div><h3 id="settlement-name">Pilot center settlement</h3><p id="settlement-detail" aria-live="polite"></p></div>
+              <div><h3 id="settlement-name">Study center settlement</h3><p id="settlement-detail" aria-live="polite"></p></div>
             </div>
           </div>
         </div>
       </section>
 
       <section id="results" class="chapter">
-        <h2>What the pilot found</h2>
+        <h2>Coverage results</h2>
         <div class="results-layout">
           <aside class="result-note">
             <strong id="best-reach"></strong>

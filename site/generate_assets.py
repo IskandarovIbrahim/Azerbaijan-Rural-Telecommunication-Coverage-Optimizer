@@ -140,7 +140,7 @@ def export_area(site, area, label, terrain_image):
     settlements = [
         dict(zip(("x", "y"), screen_point(item["geometry"]["coordinates"])),
              id=item["properties"]["settlement_id"],
-             name=("Pilot center settlement" if area == "quba" and item["properties"]["settlement_id"] == center_id
+             name=("Study center settlement" if area == "quba" and item["properties"]["settlement_id"] == center_id
                    else item["properties"]["name"]))
         for item in read_json(coarse / "settlements.geojson")["features"]
     ]
@@ -211,7 +211,7 @@ def export_area(site, area, label, terrain_image):
 def main():
     site = Path(__file__).resolve().parent
     areas = {
-        "quba": export_area(site, "quba", "Quba pilot", "terrain.png"),
+        "quba": export_area(site, "quba", "Quba", "terrain.png"),
         "lahic": export_area(site, "lahic", "Lahıc, İsmayıllı", "terrain-lahic.png"),
     }
     (site / "dist/pilot-data.js").write_text(
