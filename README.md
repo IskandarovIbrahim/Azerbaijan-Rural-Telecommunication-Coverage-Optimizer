@@ -1,13 +1,14 @@
 # Azerbaijan Rural Telecommunication Coverage Optimizer
 
-A terrain-aware wireless planning study for 14 settlements within 17.5 km of Xınalıq, Azerbaijan. The pipeline prepares mapped settlements and elevation, screens hypothetical mast locations, and estimates which site-to-settlement links pass the signal and line-of-sight checks. The next stage will use these results to compare site-selection algorithms.
+A terrain-aware wireless planning study for 14 settlements within 17.5 km of Xınalıq, Azerbaijan. The pipeline prepares mapped settlements and elevation, screens hypothetical mast locations, and estimates which site-to-settlement links pass the signal and line-of-sight checks. The study compares greedy and exact methods for choosing a minimum-cost set of sites.
 
-The free-space model found a passing link to all 14 settlements with the baseline setup. Adding terrain reduced that result to five. Doubling the mast height from 20 m to 40 m and reducing candidate spacing from 6 km to 3 km increased modeled reachability to nine. These are simulated links to outdoor receiver points under stated assumptions.
+The free-space model found a passing link to all 14 settlements with the baseline setup. Adding terrain reduced that result to five. Doubling the mast height from 20 m to 40 m and reducing candidate spacing from 6 km to 3 km increased modeled reachability to nine. Both algorithms selected five sites to reach the same nine settlements. These are simulated links to outdoor receiver points under stated assumptions.
 
 - [Pilot area and data preparation](docs/pilot-inputs.md)
 - [Data sources](docs/data-sources.md)
 - [Radio model and baseline results](docs/radio-model.md)
 - [Mast height and site spacing experiment](docs/mast-height-and-spacing.md)
+- [Tower selection and minimum site count](docs/site-selection.md)
 - [Interactive explainer source](site/dist/index.html)
 
 ## Set up the project in Windows PowerShell
@@ -16,7 +17,7 @@ From the project root, with Python 3.11 or newer:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e '.[geodata]'
+.\.venv\Scripts\python.exe -m pip install -e '.[geodata,optimization]'
 .\.venv\Scripts\coverage-optimizer.exe --help
 .\.venv\Scripts\coverage-optimizer.exe check-config config/quba-pilot.json
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v

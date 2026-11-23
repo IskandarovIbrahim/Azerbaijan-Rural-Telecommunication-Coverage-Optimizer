@@ -27,7 +27,28 @@ def main(argv: list[str] | None = None) -> int:
     model.add_argument("--prepared", type=Path, default=Path("data/processed/quba-pilot"))
     model.add_argument("--output", type=Path, default=Path("outputs/quba-links"))
 
+    select = commands.add_parser("select-sites", help="Compare greedy and exact tower selection.")
+    select.add_argument("--matrix", type=Path, required=True, help="Link matrix JSON from model-links.")
+    select.add_argument("--variant", default="terrain_los", choices=("terrain_los", "fspl_only"))
+    select.add_argument("--output", type=Path, default=Path("outputs/quba-selection/selection.json"))
+
     args = parser.parse_args(argv)
+    if args.command == "select-sites":
+        try:
+            from .selection import select_sites
+        except ModuleNotFoundError as exc:
+            parser.error(f"{exc}. Install with pip install -e .[optimization]")
+
+        try:
+            result = select_sites(args.matrix, args.variant, args.output)
+        except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            parser.error(f"could not select sites: {exc}")
+        print(f"Full cover: {result['full_cover_status']}")
+        for method, selection in result["methods"].items():
+            print(f"{method}: {selection['selected_site_count']} sites cover "
+                  f"{selection['covered_settlement_count']}/{result['total_settlement_count']} settlements")
+        print(f"Results: {args.output}")
+        return 0
     try:
         config = json.loads(args.path.read_text(encoding="utf-8"))
         version = config.get("schema_version") if isinstance(config, dict) else None
