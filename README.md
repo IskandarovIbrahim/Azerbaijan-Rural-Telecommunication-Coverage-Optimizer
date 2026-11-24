@@ -1,6 +1,6 @@
 # Azerbaijan Rural Telecommunication Coverage Optimizer
 
-A terrain-aware planning study that estimates which rural settlements can be reached by hypothetical wireless towers and which tower locations provide that reach at the lowest modeled cost. Four of five selected study areas have been modeled using the same terrain resolution, radio assumptions, and site-screening rules.
+A terrain-aware planning study that estimates which rural settlements can be reached by hypothetical wireless towers and which tower locations provide that reach at the lowest modeled cost. All five study areas use the same terrain resolution, radio assumptions, mast heights, and candidate grid spacings.
 
 ## Results
 
@@ -12,6 +12,7 @@ The highest-reach scenario used **40 m masts and a 3 km candidate grid** in each
 | İsmayıllı (Lahıc) | 64 of 68 | 21 | 3,611,400 AZN |
 | Gədəbəy (Slavyanka) | 67 of 92 | 30 | 5,060,600 AZN |
 | Lerik (Piran) | 111 of 138 | 25 | 4,321,500 AZN |
+| Ordubad (Bist) | 16 of 24 | 9 | 1,723,900 AZN |
 
 In Slavyanka, the exact method reached the same 67 settlements as greedy with one fewer tower. When the two methods used site-specific costs, the exact selection saved about **167,100 AZN** under the base assumptions. The estimates are for upfront infrastructure and use illustrative inputs. [Study areas](docs/study-areas.md) · [Slavyanka results](docs/slavyanka-study.md)
 
@@ -37,7 +38,7 @@ $python = '.\.venv\Scripts\python.exe'
 & $python -m pip install -e '.[geodata,optimization]'
 & $python -m unittest discover -s tests -v
 
-foreach ($area in 'quba', 'lahic', 'slavyanka', 'piran') {
+foreach ($area in 'quba', 'lahic', 'slavyanka', 'piran', 'bist') {
     & $python scripts/compare_mast_height_and_spacing.py --area $area --fetch
     if ($LASTEXITCODE -ne 0) { throw "Link modeling failed for $area" }
     & $python scripts/compare_tower_selections.py --area $area
@@ -48,7 +49,7 @@ foreach ($area in 'quba', 'lahic', 'slavyanka', 'piran') {
 & $python site/generate_assets.py
 ```
 
-The source manifests pin file URLs and checksums. Keep the dated Geofabrik extract in the local cache for exact reproduction if the original URL expires. With the input files already cached, omit `--fetch` for an offline run. Outputs are written under `outputs/`, and the site generator exports the precomputed results to `site/dist/`. [Data contract](docs/data-contract.md) · [Lahıc results](docs/lahic-pilot.md) · [Piran results](docs/piran-study.md)
+The source manifests pin file URLs and checksums. Keep the dated Geofabrik extract in the local cache for exact reproduction if the original URL expires. With the input files already cached, omit `--fetch` for an offline run. Outputs are written under `outputs/`, and the site generator exports the precomputed results to `site/dist/`. [Data contract](docs/data-contract.md) · [Lahıc results](docs/lahic-pilot.md) · [Piran results](docs/piran-study.md) · [Bist results](docs/bist-study.md)
 
 ## Author
 
