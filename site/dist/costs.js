@@ -7,13 +7,29 @@ const aznPerUsd = 1.7;
 const number = new Intl.NumberFormat("en-US", {maximumFractionDigits: 0});
 const formatAzn = amount => number.format(amount) + " AZN";
 const aznFromUsd = amount => formatAzn(amount * aznPerUsd);
-const percent = new Intl.NumberFormat("en-US", {
-  style: "percent", maximumFractionDigits: 2,
-});
 const roundedAzn = amount => formatAzn(Math.round(amount * aznPerUsd / 100) * 100);
 const methods = ["minimum_count", "greedy", "exact"];
 
+function renderCostEstimate() {
+  const height = Number(document.querySelector('input[name="height"]:checked').value);
+  const spacing = Number(document.querySelector('input[name="spacing"]:checked').value);
+  const costData = window.PILOT_DATA.areas[costArea.value].costs;
+  const profile = profileControl.value;
+  const scenario = costData.cases.find(item =>
+    item.mast_height_m === height && item.grid_spacing_m === spacing * 1000
+  );
+  const estimate = scenario.estimates[profile].exact;
+  const towers = estimate.site_count === 1 ? " tower" : " towers";
+  document.querySelector("#estimate-scenario").textContent =
+    height + " m mast · " + spacing + " km candidate grid · " + costData.profiles[profile].label;
+  document.querySelector("#estimate-price").textContent = roundedAzn(estimate.total_usd);
+  document.querySelector("#estimate-coverage").textContent =
+    estimate.site_count + towers + " · " + scenario.reachable_count + " of " +
+    scenario.settlement_count + " settlements reachable";
+}
+
 function renderCosts() {
+  renderCostEstimate();
   const costData = window.PILOT_DATA.areas[costArea.value].costs;
   const key = profileControl.value;
   const profile = costData.profiles[key];
@@ -45,22 +61,11 @@ function renderCosts() {
     return row;
   });
   costRows.replaceChildren(...rows);
-
-  const denseTall = costData.cases.find(scenario =>
-    scenario.mast_height_m === 40 && scenario.grid_spacing_m === 3000
-  );
-  const estimates = denseTall.estimates[key];
-  const saving = estimates.minimum_count.total_usd - estimates.exact.total_usd;
-  const greedyGap = estimates.greedy.total_usd - estimates.exact.total_usd;
-  const finding = document.querySelector("#cost-finding");
-  finding.textContent = "At 40 m and 3 km spacing, minimum-cost selection reaches " + denseTall.reachable_count + " settlements for " +
-    "about " + roundedAzn(estimates.exact.total_usd) + ", a saving of about " + roundedAzn(saving) +
-    " versus pricing the existing minimum-tower layout. " +
-    (greedyGap > 0
-      ? "Cost-aware greedy is about " + percent.format(greedyGap / estimates.exact.total_usd) + " above the minimum."
-      : "Cost-aware greedy matches the minimum.");
 }
 
+for (const input of document.querySelectorAll('input[name="height"], input[name="spacing"]')) {
+  input.addEventListener("change", renderCostEstimate);
+}
 profileControl.addEventListener("change", renderCosts);
 costArea.addEventListener("change", renderCosts);
 renderCosts();

@@ -16,52 +16,15 @@
   <header class="top">
     <div class="frame top-inner">
       <a class="brand" href="#top">Signal Atlas</a>
-      <nav aria-label="On this page"><a href="#method">Method</a><a href="#explore">Map</a><a href="#results">Results</a><a href="#costs">Cost</a><a href="#use">Applications</a></nav>
+      <nav aria-label="On this page"><a href="#explore">Map</a><a href="#costs">Cost</a><a href="#method">Method</a></nav>
     </div>
   </header>
   <main id="top" class="frame">
     <article>
       <header class="intro">
-        <div>
-          <h1>Azerbaijan Rural Telecommunication Coverage Optimizer</h1>
-          <p class="deck">Terrain-aware planning for wireless links to rural settlements across Azerbaijan.</p>
-        </div>
-        <aside class="scope" aria-label="Study scope">
-          <h2>Current scope</h2>
-          <p><strong>Five rural study areas</strong> across Azerbaijan.</p>
-        </aside>
+        <h1>Azerbaijan Rural Telecommunication Coverage Optimizer</h1>
+        <p class="deck">Ridges can block wireless links between nearby towers and villages. Compare which settlements proposed layouts could reach and shortlist tower sites for field checks.</p>
       </header>
-
-      <section class="overview" aria-label="Problem and goal">
-        <div><h2>The problem</h2><p>A ridge can block a radio link even when the mast and settlement are close. Distance alone can make a proposed network look better than it would with terrain included.</p></div>
-        <div><h2>The goal</h2><p>Find which settlements a proposed network could reach, then identify the fewest tower sites needed to reach them under the same cost assumption.</p></div>
-      </section>
-
-      <section id="method" class="chapter">
-        <h2>From terrain data to tower selection</h2>
-        <dl class="method-list">
-          <div><dt>Map the area</dt><dd>Locate settlements from OpenStreetMap and screen potential sites using 90 m elevation data.</dd></div>
-          <div><dt>Check each link</dt><dd>Estimate how much the signal weakens, then check whether the direct path clears the terrain.</dd></div>
-          <div><dt>Select sites</dt><dd>Compare choosing the best remaining site at each step with a solver that verifies the minimum.</dd></div>
-        </dl>
-        <details class="technical-note">
-          <summary>Methods and equations</summary>
-          <div class="formula-grid">
-            <div>
-              <h3>Free-space path loss and line of sight</h3>
-              <p class="equation"><var>L</var><sub>FS</sub> = 32.44 + 20 log<sub>10</sub>(<var>d</var>) + 20 log<sub>10</sub>(<var>f</var>)</p>
-              <p>Use distance <var>d</var> in km and frequency <var>f</var> in MHz. Received power equals transmit power plus antenna gains, minus path and system losses. A link needs enough power after the fade margin, plus clearance above the elevation profile when terrain is enabled.</p>
-              <p>The terrain test checks the direct ray against 90 m elevation cells and accounts for Earth curvature using an effective radius of 4/3 of the mean Earth radius. <a href="https://www.itu.int/rec/R-REC-P.525-5-202411-I/en">ITU-R P.525</a> · <a href="https://www.itu.int/rec/R-REC-P.530-19-202509-I/en">ITU-R P.530</a></p>
-            </div>
-            <div>
-              <h3>Weighted set cover</h3>
-              <p class="equation">Minimize &Sigma;<sub>i</sub> <var>c</var><sub>i</sub><var>x</var><sub>i</sub> &nbsp;·&nbsp; &Sigma;<sub>i</sub> <var>a</var><sub>ij</sub><var>x</var><sub>i</sub> &ge; 1 for each reachable settlement <var>j</var></p>
-              <p><var>x</var><sub>i</sub> is 1 when site <var>i</var> is selected, <var>c</var><sub>i</sub> is its cost, and <var>a</var><sub>ij</sub> is 1 when that site can serve settlement <var>j</var>. Every reachable settlement must have at least one selected site.</p>
-              <p>Greedy picks the most newly covered settlements per unit of cost at each step. The exact method uses mixed-integer linear programming to verify the lowest cost. With equal costs, both methods aim to minimize the tower count. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html">SciPy MILP</a></p>
-            </div>
-          </div>
-        </details>
-      </section>
 
       <section id="explore" class="chapter" aria-labelledby="map-title">
         <h2 id="map-title">Explore the coverage map</h2>
@@ -87,16 +50,23 @@
               <label><input type="radio" name="spacing" value="6"><span>6 km</span></label>
               <label><input type="radio" name="spacing" value="3" checked><span>3 km</span></label>
             </div></fieldset>
-            <fieldset><legend>Signal model</legend><div class="choices">
-              <label><input type="radio" name="model" value="terrain_los" checked><span>With terrain</span></label>
-              <label><input type="radio" name="model" value="fspl_only"><span>Signal only</span></label>
-            </div></fieldset>
-            <label class="select-wrap" for="network">Sites shown</label>
-            <select id="network" aria-describedby="network-hint">
-              <option value="all">All candidates</option><option value="greedy">Greedy selection</option><option value="exact" selected>Exact selection</option>
-            </select>
-            <p id="network-hint" class="hint">Selected towers are calculated with terrain included.</p>
-            <p class="metrics" aria-live="polite"><strong id="reachable">9</strong> of <span id="settlement-total">14</span> reachable<br><strong id="site-count">5</strong> <span id="site-label">proposed towers</span> · <strong id="links"></strong> usable links</p>
+            <p class="metrics" aria-live="polite">
+              <strong id="reachable">9</strong> of <span id="settlement-total">14</span> settlements reachable<br>
+              <strong id="site-count">5</strong> <span id="site-label">proposed towers</span>
+            </p>
+            <details class="advanced-settings">
+              <summary>Advanced options</summary>
+              <fieldset><legend>Signal model</legend><div class="choices">
+                <label><input type="radio" name="model" value="terrain_los" checked><span>With terrain</span></label>
+                <label><input type="radio" name="model" value="fspl_only"><span>Signal only</span></label>
+              </div></fieldset>
+              <label class="select-wrap" for="network">Sites shown</label>
+              <select id="network" aria-describedby="network-hint">
+                <option value="all">All candidates</option><option value="greedy">Greedy selection</option><option value="exact" selected>Exact selection</option>
+              </select>
+              <p id="network-hint" class="hint">Both selections use terrain-aware links.</p>
+              <p class="hint"><strong id="links"></strong> usable links</p>
+            </details>
           </aside>
 
           <div class="map-panel">
@@ -132,16 +102,8 @@
             </div>
           </div>
         </div>
-      </section>
-
-      <section id="results" class="chapter">
-        <h2>Coverage results</h2>
-        <div class="results-layout">
-          <aside class="result-note">
-            <strong id="best-reach"></strong>
-            <p id="best-description"></p>
-            <p id="method-agreement"></p>
-          </aside>
+        <details id="results" class="technical-note">
+          <summary>Compare all scenarios</summary>
           <div class="table-wrap">
             <table>
               <caption>Terrain-aware results · <span id="area-result-name"></span></caption>
@@ -149,46 +111,61 @@
               <tbody id="result-rows"></tbody>
             </table>
           </div>
-        </div>
-        <p class="reading result-context" id="result-context"></p>
+        </details>
       </section>
 
-      <section id="costs" class="chapter">
-        <h2>How site choice changes infrastructure cost</h2>
-        <p class="reading">Compare upfront cost for three layouts that reach the same settlements within each scenario. Change the assumptions to see how the estimates respond.</p>
-        <div class="cost-controls">
-          <label class="select-wrap" for="cost-profile">Cost assumptions
-            <select id="cost-profile">
-              <option value="lower">Lower</option>
-              <option value="base" selected>Base</option>
-              <option value="higher">Higher</option>
-            </select>
-          </label>
-          <p id="cost-inputs" aria-live="polite"></p>
+      <section id="costs" class="chapter" aria-labelledby="cost-title">
+        <h2 id="cost-title">Estimated infrastructure cost</h2>
+        <div class="cost-estimate" aria-live="polite">
+          <p id="estimate-scenario" class="estimate-scenario"></p>
+          <p id="estimate-price" class="estimate-price"></p>
+          <p id="estimate-coverage"></p>
         </div>
-        <p class="cost-equation">Site cost = setup + mast and foundation + distance to mapped road × access rate</p>
-        <div class="table-wrap">
-          <table id="cost-table">
-            <caption><span id="area-cost-name"></span> · Estimated upfront cost in AZN, rounded to the nearest 100 manat</caption>
-            <thead><tr><th scope="col">Scenario</th><th scope="col">Reachable</th><th scope="col">Fewest towers, then priced</th><th scope="col">Cost-aware greedy</th><th scope="col">Minimum cost</th></tr></thead>
-            <tbody id="cost-rows"></tbody>
-          </table>
-        </div>
-        <p class="finding-cost" id="cost-finding" aria-live="polite"></p>
+        <p class="reading cost-note">Planning estimate for the lowest-cost layout with terrain included.</p>
         <details class="technical-note">
-          <summary>What the estimate includes</summary>
+          <summary>Cost breakdown</summary>
+          <div class="cost-controls">
+            <label class="select-wrap" for="cost-profile">Cost assumptions
+              <select id="cost-profile">
+                <option value="lower">Lower</option>
+                <option value="base" selected>Base</option>
+                <option value="higher">Higher</option>
+              </select>
+            </label>
+            <p id="cost-inputs" aria-live="polite"></p>
+          </div>
+          <p class="cost-equation">Site cost = setup + mast and foundation + distance to mapped road × access rate</p>
+          <div class="table-wrap">
+            <table id="cost-table">
+              <caption><span id="area-cost-name"></span> · Estimated upfront cost in AZN, rounded to the nearest 100 manat</caption>
+              <thead><tr><th scope="col">Scenario</th><th scope="col">Reachable</th><th scope="col">Fewest towers, then priced</th><th scope="col">Cost-aware greedy</th><th scope="col">Minimum cost</th></tr></thead>
+              <tbody id="cost-rows"></tbody>
+            </table>
+          </div>
           <p>Setup covers basic site preparation, radio equipment, installation and onsite power equipment. The mast allowance covers the structure and foundation. The access allowance uses straight-line distance to the nearest mapped road as a proxy for site difficulty.</p>
           <p>These amounts are planning assumptions. The estimates use the Central Bank of Azerbaijan rate of <a href="https://www.cbar.az/currency/rates?date=23%2F11%2F2026&amp;language=en">1 USD = 1.70 AZN on 23 November 2026</a>. The access distance is a map measurement. A deployment budget would also need local quotes, engineering surveys, route measurements, land and permit costs, backhaul, settlement receivers, taxes and operating costs. <a href="https://docs.fcc.gov/public/attachments/DA-20-594A1.pdf">Reference for infrastructure cost categories</a></p>
         </details>
       </section>
 
-      <section id="use" class="chapter">
-        <h2>How the model could help</h2>
-        <div class="use-layout">
-          <div><h3>Shortlist sites for field checks</h3><p>Compare layouts before visiting candidate sites. Flag settlements that may need different locations or technologies.</p></div>
-          <div><h3>Extend the study</h3><p>Apply the same workflow in more rural areas and compare how terrain and site spacing affect the results.</p></div>
-          <div><h3>Check the assumptions</h3><p>The model uses hypothetical equipment and outdoor receiver points. Actual deployment requires field measurements, access checks and local cost estimates.</p></div>
-        </div>
+      <section id="method" class="chapter" aria-label="Method">
+        <details class="technical-note">
+          <summary>Methods and equations</summary>
+          <p>The model pairs OpenStreetMap settlement points with potential tower sites, checks each proposed link against a 90 m elevation grid, and compares two ways to choose sites.</p>
+          <div class="formula-grid">
+            <div>
+              <h3>Free-space path loss and line of sight</h3>
+              <p class="equation"><var>L</var><sub>FS</sub> = 32.44 + 20 log<sub>10</sub>(<var>d</var>) + 20 log<sub>10</sub>(<var>f</var>)</p>
+              <p>Use distance <var>d</var> in km and frequency <var>f</var> in MHz. Received power equals transmit power plus antenna gains, minus path and system losses. A link needs enough power after the fade margin, plus clearance above the elevation profile when terrain is enabled.</p>
+              <p>The terrain test checks the direct ray against 90 m elevation cells and accounts for Earth curvature using an effective radius of 4/3 of the mean Earth radius. <a href="https://www.itu.int/rec/R-REC-P.525-5-202411-I/en">ITU-R P.525</a> · <a href="https://www.itu.int/rec/R-REC-P.530-19-202509-I/en">ITU-R P.530</a></p>
+            </div>
+            <div>
+              <h3>Weighted set cover</h3>
+              <p class="equation">Minimize &Sigma;<sub>i</sub> <var>c</var><sub>i</sub><var>x</var><sub>i</sub> &nbsp;·&nbsp; &Sigma;<sub>i</sub> <var>a</var><sub>ij</sub><var>x</var><sub>i</sub> &ge; 1 for each reachable settlement <var>j</var></p>
+              <p><var>x</var><sub>i</sub> is 1 when site <var>i</var> is selected, <var>c</var><sub>i</sub> is its cost, and <var>a</var><sub>ij</sub> is 1 when that site can serve settlement <var>j</var>. Every reachable settlement must have at least one selected site.</p>
+              <p>Greedy picks the most newly covered settlements per unit of cost at each step. The exact method uses mixed-integer linear programming to verify the lowest cost. With equal costs, both methods aim to minimize the tower count. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html">SciPy MILP</a></p>
+            </div>
+          </div>
+        </details>
       </section>
     </article>
 

@@ -167,25 +167,13 @@ function render() {
 function renderResults() {
   const results = Object.values(data.cases);
   const total = data.settlements.length;
-  const terrainCount = item => item.variants.terrain_los.reachable;
-  const best = results.reduce((winner, item) => terrainCount(item) > terrainCount(winner) ? item : winner);
-  const bestCount = terrainCount(best);
-  document.querySelector("#best-reach").textContent = bestCount + " of " + total;
-  document.querySelector("#best-description").textContent =
-    "Settlements reachable with " + best.selections.exact.siteIds.length + " " + best.height +
-    " m towers chosen from the " + best.spacing + " km grid.";
-  const ties = results.filter(item => item.selections.greedy.siteIds.length === item.selections.exact.siteIds.length).length;
-  document.querySelector("#method-agreement").textContent =
-    "Greedy matched the minimum tower count in " + ties + " of " + results.length + " scenarios.";
-  document.querySelector("#result-context").textContent = (total - bestCount) +
-    " of " + total + " settlements lack a passing link in the highest-reach scenario.";
   document.querySelector("#result-rows").replaceChildren(...results.map(item => {
     const row = document.createElement("tr");
     const mast = document.createElement("th");
     mast.scope = "row";
     mast.textContent = item.height + " m";
     row.append(mast);
-    for (const value of [item.spacing + " km", item.candidates, terrainCount(item) + " of " + total,
+    for (const value of [item.spacing + " km", item.candidates, item.variants.terrain_los.reachable + " of " + total,
                          item.selections.exact.siteIds.length]) {
       const cell = document.createElement("td");
       cell.textContent = value;
