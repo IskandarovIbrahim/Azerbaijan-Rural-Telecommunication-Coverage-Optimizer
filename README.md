@@ -16,6 +16,20 @@ The highest-reach scenario used **40 m masts and a 3 km candidate grid** in each
 
 In Slavyanka, the exact method reached the same 67 settlements as greedy with one fewer tower. When the two methods used site-specific costs, the exact selection saved about **167,100 AZN** under the base assumptions. The estimates are for upfront infrastructure and use illustrative inputs. [Study areas](docs/study-areas.md) · [Slavyanka results](docs/slavyanka-study.md)
 
+### Solver runtime
+
+Greedy selection took under 1 ms and exact selection took under 15 ms in every scenario, based on the median runtime of each method.
+
+| Study area | Greedy median range (ms) | Exact median range (ms) |
+| --- | ---: | ---: |
+| Quba | 0.02–0.13 | 0.93–1.70 |
+| İsmayıllı | 0.13–0.62 | 0.86–14.14 |
+| Gədəbəy | 0.15–0.92 | 0.84–1.20 |
+| Lerik | 0.09–0.74 | 0.89–1.77 |
+| Ordubad | 0.02–0.22 | 0.79–0.97 |
+
+Each range spans the four height and spacing scenarios for that area. Each method ran 25 times after one untimed run, using the same preloaded terrain-aware link matrix, equal site costs and the same set of reachable settlements. The timing covers site selection after link modeling. The benchmark ran on Windows x64 with an Intel Core i5-12450HX, Python 3.11.9 and SciPy 1.17.1.
+
 ## How it works
 
 1. Use named OpenStreetMap village and hamlet points, a 90 m Copernicus elevation surface, and a grid of candidate sites screened for terrain and water.
