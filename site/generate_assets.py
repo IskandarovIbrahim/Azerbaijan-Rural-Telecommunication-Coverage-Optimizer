@@ -86,6 +86,12 @@ MAP_LABELS = {
         ("Lənkəran", 48.8539286, 38.7537311),
         ("Liman", 48.8071452, 38.8783968),
     ],
+    "bist": [
+        ("Əlincə qalası", 45.6950696, 39.1938013),
+        ("İlandağ", 45.7137279, 39.1310314),
+        ("Qapıcıq", 46.0027755, 39.1591727),
+        ("Kömürdağ", 46.0048252, 39.2585778),
+    ],
 }
 
 
@@ -238,6 +244,7 @@ def main():
         "lahic": export_area(site, "lahic", "Lahıc, İsmayıllı", "terrain-lahic.png"),
         "slavyanka": export_area(site, "slavyanka", "Slavyanka, Gədəbəy", "terrain-slavyanka.png"),
         "piran": export_area(site, "piran", "Piran, Lerik", "terrain-piran.png"),
+        "bist": export_area(site, "bist", "Bist, Ordubad", "terrain-bist.png"),
     }
     (site / "dist/pilot-data.js").write_text(
         "window.PILOT_DATA = " + json.dumps({"areas": areas}, ensure_ascii=False, separators=(",", ":")) + ";\n",
