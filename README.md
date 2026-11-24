@@ -25,7 +25,7 @@ The simulation uses one outdoor receiver point per settlement, assumes power and
 
 ## Interactive map
 
-Open [Signal Atlas](site/dist/index.html) in a browser from your local checkout to explore Quba, İsmayıllı and Gədəbəy. Choose a district and scenario to compare all candidates, the greedy layout, and the exact layout. Zoom or drag the map, turn on **Elevation** to inspect a 90 m cell, and select a settlement to see a usable link or an example terrain obstruction when available. The cost table compares lower, base, and higher assumptions in AZN.
+Open [Signal Atlas](site/dist/index.html) in a browser from your local checkout to explore Quba, İsmayıllı, Gədəbəy and Lerik. Choose a district and scenario to compare all candidates, the greedy layout, and the exact layout. Zoom or drag the map, turn on **Elevation** to inspect a 90 m cell, and select a settlement to see a usable link or an example terrain obstruction when available. The cost table compares lower, base, and higher assumptions in AZN.
 
 ## Reproduce on Windows
 
