@@ -1,6 +1,6 @@
 # Azerbaijan Rural Telecommunication Coverage Optimizer
 
-A terrain-aware planning study that estimates which rural settlements can be reached by hypothetical wireless towers and which tower locations provide that reach at the lowest modeled cost. Three of five selected study areas have been modeled using the same terrain resolution, radio assumptions, and site-screening rules.
+A terrain-aware planning study that estimates which rural settlements can be reached by hypothetical wireless towers and which tower locations provide that reach at the lowest modeled cost. Four of five selected study areas have been modeled using the same terrain resolution, radio assumptions, and site-screening rules.
 
 ## Results
 
@@ -11,6 +11,7 @@ The highest-reach scenario used **40 m masts and a 3 km candidate grid** in each
 | Quba (Xınalıq) | 9 of 14 | 5 | 885,500 AZN |
 | İsmayıllı (Lahıc) | 64 of 68 | 21 | 3,611,400 AZN |
 | Gədəbəy (Slavyanka) | 67 of 92 | 30 | 5,060,600 AZN |
+| Lerik (Piran) | 111 of 138 | 25 | 4,321,500 AZN |
 
 In Slavyanka, the exact method reached the same 67 settlements as greedy with one fewer tower. When the two methods used site-specific costs, the exact selection saved about **167,100 AZN** under the base assumptions. The estimates are for upfront infrastructure and use illustrative inputs. [Study areas](docs/study-areas.md) · [Slavyanka results](docs/slavyanka-study.md)
 
@@ -24,7 +25,7 @@ The simulation uses one outdoor receiver point per settlement, assumes power and
 
 ## Interactive map
 
-Open [Signal Atlas](site/dist/index.html) in a browser from your local checkout. Choose a district and scenario to compare all candidates, the greedy layout, and the exact layout. Zoom or drag the map, turn on **Elevation** to inspect a 90 m cell, and select a settlement to see a usable link or an example terrain obstruction when available. The cost table compares lower, base, and higher assumptions in AZN.
+Open [Signal Atlas](site/dist/index.html) in a browser from your local checkout to explore Quba, İsmayıllı and Gədəbəy. Choose a district and scenario to compare all candidates, the greedy layout, and the exact layout. Zoom or drag the map, turn on **Elevation** to inspect a 90 m cell, and select a settlement to see a usable link or an example terrain obstruction when available. The cost table compares lower, base, and higher assumptions in AZN.
 
 ## Reproduce on Windows
 
@@ -36,7 +37,7 @@ $python = '.\.venv\Scripts\python.exe'
 & $python -m pip install -e '.[geodata,optimization]'
 & $python -m unittest discover -s tests -v
 
-foreach ($area in 'quba', 'lahic', 'slavyanka') {
+foreach ($area in 'quba', 'lahic', 'slavyanka', 'piran') {
     & $python scripts/compare_mast_height_and_spacing.py --area $area --fetch
     if ($LASTEXITCODE -ne 0) { throw "Link modeling failed for $area" }
     & $python scripts/compare_tower_selections.py --area $area
@@ -47,7 +48,7 @@ foreach ($area in 'quba', 'lahic', 'slavyanka') {
 & $python site/generate_assets.py
 ```
 
-The source manifests pin file URLs and checksums. Keep the dated Geofabrik extract in the local cache for exact reproduction if the original URL expires. With the input files already cached, omit `--fetch` for an offline run. Outputs are written under `outputs/`, and the site generator exports the precomputed results to `site/dist/`. [Data contract](docs/data-contract.md) · [Lahıc results](docs/lahic-pilot.md)
+The source manifests pin file URLs and checksums. Keep the dated Geofabrik extract in the local cache for exact reproduction if the original URL expires. With the input files already cached, omit `--fetch` for an offline run. Outputs are written under `outputs/`, and the site generator exports the precomputed results to `site/dist/`. [Data contract](docs/data-contract.md) · [Lahıc results](docs/lahic-pilot.md) · [Piran results](docs/piran-study.md)
 
 ## Author
 

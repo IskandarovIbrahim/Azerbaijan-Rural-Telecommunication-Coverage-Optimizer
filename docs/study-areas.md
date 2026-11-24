@@ -1,13 +1,13 @@
 # Rural study areas
 
-The study uses five settlement-centered pilot areas. Quba, Lahıc and Slavyanka have been modeled. The other two areas were screened using the same OpenStreetMap extract and study radius. The areas were chosen to compare terrain and settlement patterns across different parts of Azerbaijan.
+The study uses five settlement-centered pilot areas. Quba, Lahıc, Slavyanka and Piran have been modeled. Bist was screened using the same OpenStreetMap extract and study radius. The areas were chosen to compare terrain and settlement patterns across different parts of Azerbaijan.
 
 | Pilot center | District or region | OpenStreetMap node | Center coordinates (longitude, latitude) | Mapped village and hamlet points within 17.5 km | Status |
 | --- | --- | --- | --- | ---: | --- |
 | Xınalıq | Quba | `1798212669` | `48.1283975, 41.1800303` | 14 | Modeled |
 | Lahıc | İsmayıllı | `2801446850` | `48.3826301, 40.8457326` | 68 | [Modeled](lahic-pilot.md) |
 | Slavyanka | Gədəbəy | `3502499999` | `45.8106686, 40.6591700` | 92 | [Modeled](slavyanka-study.md) |
-| Piran | Lerik | `3610653341` | `48.6549300, 38.7327938` | 138 | Screened |
+| Piran | Lerik | `3610653341` | `48.6549300, 38.7327938` | 138 | [Modeled](piran-study.md) |
 | Bist | Ordubad, Nakhchivan | `6036790434` | `45.8796251, 39.1483341` | 24 | Screened |
 
 Counts come from named village and hamlet nodes in the 22 November 2026 [Geofabrik Azerbaijan snapshot](https://download.geofabrik.de/asia/azerbaijan.html). They are a screening count before review for duplicate places and national-boundary clipping. Public Copernicus GLO-90 elevation and water-mask file endpoints responded for the screened areas. File integrity and terrain completeness still need to be checked during preparation. [Copernicus DEM registry](https://registry.opendata.aws/copernicus-dem/)
