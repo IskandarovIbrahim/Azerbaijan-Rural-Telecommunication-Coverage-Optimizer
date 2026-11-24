@@ -69,6 +69,22 @@ class PilotOSM(osmium.SimpleHandler):
             previous = point
 
 
+def load_boundary_check(path: Path):
+    """Load a WGS84 GeoJSON boundary and return a point-in-boundary predicate."""
+    from shapely import Point, from_geojson
+    from shapely.prepared import prep
+
+    geometry = from_geojson(path.read_text(encoding="utf-8"))
+    if geometry.is_empty or geometry.area <= 0 or not geometry.is_valid:
+        raise ValueError(f"invalid boundary geometry: {path.name}")
+    boundary = prep(geometry)
+
+    def covers_point(lon_lat: tuple[float, float]) -> bool:
+        return boundary.covers(Point(lon_lat))
+
+    return covers_point
+
+
 def distance_to_roads(point: tuple[float, float], segments: np.ndarray) -> float | None:
     if not len(segments):
         return None

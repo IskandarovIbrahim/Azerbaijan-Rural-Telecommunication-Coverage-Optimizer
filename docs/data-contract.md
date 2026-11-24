@@ -17,6 +17,8 @@ Set `center_lon_lat` to `[longitude, latitude]` in WGS84 decimal degrees using a
 
 Record for every acquired input the source ID, publisher, dataset name, exact URL or tile ID, release or snapshot, UTC retrieval date, SHA-256, license and credit, input CRS and resolution where applicable, vertical datum for elevations, and preparation steps. Keep local paths and authentication details out of committed source metadata. Label synthetic inputs explicitly.
 
+A manifest can include one verified WGS84 GeoJSON input with role "boundary". When supplied, preparation keeps only settlement points within or on the boundary, marks outside candidate points ineligible, and reports the number of excluded settlements. The study circle and terrain buffer retain their original extents.
+
 ## Modeled links
 
 Each run records one row per eligible candidate–settlement pair per model variant with `scenario_id`, model variant, `site_id`, `settlement_id`, distance in meters, FSPL in dB, received power in dBm, margin in dB, LOS state, minimum clearance in meters, decision and reason. CSV represents unavailable numeric values as empty fields. Keep FSPL-only LOS flagged as unevaluated. Margin is measured after reserving the configured fade margin. The binary matrix uses site rows and settlement columns with matching ID arrays for both variants.

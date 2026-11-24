@@ -13,7 +13,7 @@ from pyproj import Transformer
 import rasterio
 from rasterio.transform import from_origin, rowcol
 
-from .geodata import PilotOSM, distance_to_roads, project_tiles
+from .geodata import PilotOSM, distance_to_roads, load_boundary_check, project_tiles
 from .inputs import load_sources, sha256
 
 
@@ -35,7 +35,8 @@ def point_collection(rows: list[dict]) -> dict:
 
 
 def candidate_grid(
-    study: dict, settings: dict, center, inverse, transform, terrain, water, road_segments
+    study: dict, settings: dict, center, inverse, transform, terrain, water, road_segments,
+    boundary_covers=None,
 ) -> list[dict]:
     spacing = settings["candidate_spacing_m"]
     radius = study["radius_km"] * 1000
@@ -62,10 +63,13 @@ def candidate_grid(
                 reasons.append("mapped_water")
             if angle > settings["max_slope_degrees"]:
                 reasons.append("slope_exceeds_threshold")
+            point = inverse.transform(x, y)
+            if boundary_covers is not None and not boundary_covers(point):
+                reasons.append("outside_boundary")
             road_distance = distance_to_roads((x, y), road_segments)
             rows.append({
                 "site_id": f"{study['id']}-grid{spacing}m-{gx}-{gy}",
-                "point": inverse.transform(x, y),
+                "point": point,
                 "surface_elevation_m": round(elevation, 2) if np.isfinite(elevation) else None,
                 "slope_degrees": round(angle, 2) if np.isfinite(angle) else None,
                 "road_distance_m": round(road_distance, 2) if road_distance is not None else None,
@@ -87,10 +91,16 @@ def prepare_pilot(config: dict, manifest: Path, cache: Path, output: Path, offli
     inverse = Transformer.from_crs(crs, 4326, always_xy=True)
     cx, cy = center = to_metric.transform(*study["center_lon_lat"])
     sources = load_sources(manifest, cache, offline)
+    boundary_files = sources.get("boundary", [])
+    if len(boundary_files) > 1:
+        raise ValueError("only one study boundary input is supported")
+    boundary_covers = load_boundary_check(boundary_files[0]) if boundary_files else None
 
     osm = PilotOSM(to_metric, center, radius)
     osm.apply_file(str(sources["osm"][0]), locations=True)
     settlements = sorted(osm.settlements, key=lambda row: row["distance_from_center_m"])
+    if boundary_covers is not None:
+        settlements = [row for row in settlements if boundary_covers(row["point"])]
     ids = {row["settlement_id"] for row in settlements}
     if len(ids) != len(settlements) or study["center_source_id"] not in ids:
         raise ValueError("settlement IDs are duplicated or the pinned center was not found")
@@ -117,7 +127,8 @@ def prepare_pilot(config: dict, manifest: Path, cache: Path, output: Path, offli
     for settlement in settlements:
         i, j = rowcol(transform, *settlement["metric_point"])
         settlement["surface_elevation_m"] = round(float(terrain[i, j]), 2)
-    sites = candidate_grid(study, settings, center, inverse, transform, terrain, water, roads)
+    sites = candidate_grid(study, settings, center, inverse, transform, terrain, water, roads,
+                           boundary_covers=boundary_covers)
     eligible = sum(site["eligible"] for site in sites)
     if not eligible:
         raise ValueError("no candidate grid points passed initial screening")
@@ -146,6 +157,9 @@ def prepare_pilot(config: dict, manifest: Path, cache: Path, output: Path, offli
         "prepared_config": {"study_area": study, "preparation": settings},
         "attribution": json.loads(manifest.read_text(encoding="utf-8"))["attribution"],
     }
+
+    if boundary_covers is not None:
+        summary["settlements_excluded_by_boundary"] = len(osm.settlements) - len(settlements)
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(dir=output.parent) as temp:
